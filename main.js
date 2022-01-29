@@ -25,7 +25,8 @@ let theseAreCloseCells = [];
 let closeCounter = 0;
 let clickedCell = null;
 let openedCells = 0;
-
+let objectCells = [];
+let safeCells = 0;
 settingTheUI();
 
 
@@ -48,18 +49,19 @@ function startGame() {
 	generateBombs();
 	// in base al valore della difficoltà genera la tabella con n bombe piazzate in modo random
 	generateBoard(size);
+	setCellsData();
 	settingTheUI();
 };
 
 function settingTheUI() {
 	flagsDisplay.innerText = flaggedCells.length;
 	remainingDisplay.innerText = n_Bombs;
-}
+};
 
 function updatingDisplays() {
 	flagsDisplay.innerText = flaggedCells.length;
 	remainingDisplay.innerText = n_Bombs - flaggedCells.length;
-}
+};
 
 function resetGame() {
 	gameIsOn = true;
@@ -75,11 +77,13 @@ function resetGame() {
 	closeCounter = 0;
 	clickedCell = null;
 	openedCells = 0;
+	objectCells = [];
+	safeCells = 0;
 
 	// displays
 	flagsDisplay.innerText = flaggedCells.length;
 	remainingDisplay.innerText = n_Bombs;
-}
+};
 
 function getBoardgameSize() {
 	switch (difficulty.value) {
@@ -100,27 +104,22 @@ function getBoardgameSize() {
 
 		case '4':
 			size = 20;
-			n_Bombs = 55;
+			n_Bombs = 58;
 			break;
-	}
+	};
 };
 
 function generateBombs() {
 	// empty the bombs list
 	bombs = [];
 	for (let i = 0; i < n_Bombs; i++) {
-		// let new_bomb = {};
-		// new_bomb.x = Math.floor((Math.random() * size) + 1);
-		// new_bomb.y = Math.floor((Math.random() * size) + 1);
-		// bombs.push(new_bomb);
-		let n = Math.floor(Math.random() * Math.pow(size, 2));
-		if (!bombs.includes(n)) {
-			bombs.push(n);
+		let new_bomb = {};
+		let id = Math.floor(Math.random() * Math.pow(size, 2));
+		if (!bombs.includes(id)) {
+			bombs.push(id);
 		} else i--;
-		console.log(bombs);
 	}
-
-
+	console.log(bombs);
 };
 
 function generateBoard(size) {
@@ -150,6 +149,7 @@ function generateBoard(size) {
 			if (bombs.includes(j)) {
 				cell.dataset.mine = true;
 				DomBombs.push(cell);
+				cell.style.backgroundColor = 'yellow';
 			}
 
 			board.appendChild(cell);
@@ -157,35 +157,42 @@ function generateBoard(size) {
 			j++;
 		}
 	}
-
+	safeCells = allCells.length - n_Bombs;
 	console.log(DomBombs);
+};
+
+function setCellsData() {
+	allCells.forEach((cell, i) => {
+		let o = {};
+		o['id'] = i;
+		o['counter'] = nearBombs(cell);
+		o['x'] = cell.dataset.x;
+		o['y'] = cell.dataset.y;
+		objectCells.push(o);
+	});
+	console.log(objectCells);
 };
 
 function isBomb(e) {
 	// reference to the clicked cell
 	clickedCell = e.target;
+	clickId = parseInt(clickedCell.dataset.id);
 
 	if (clickedCell.classList.contains('flagged')) {
 		return false;
 	}
 
-	if (DomBombs.includes(clickedCell)) {
+	if (bombs.includes(clickId)) {
 		gameOver();
 	} else {
 		clickedCell.classList.add('not');
-		nearBombs(clickedCell);
+		clickedCell.innerText = objectCells[clickId].counter;
 		openedCells++;
-		console.log(allCells.length - openedCells);
+		colorCounter(objectCells[clickId].counter);
 	}
 	
+	watchOpenedCells();
 };
-
-// function haveYouWin() {
-// 	let totNoBombs = allCells.length - n_Bombs;
-// 	if (openedCells == totNoBombs) {
-// 		youWin();
-// 	}
-// }
 
 function gameOver() {
 	DomBombs.forEach(element => {
@@ -212,10 +219,10 @@ function nearBombs(clickedCell) {
 	let yM = y + 1;
 
 	allCells.forEach(e => {
-		if (
-			(parseInt(e.dataset.x) == xm || parseInt(e.dataset.x) == x || parseInt(e.dataset.x) == xM) 
-			&& 
-			(parseInt(e.dataset.y) == ym || parseInt(e.dataset.y) == y || parseInt(e.dataset.y) == yM)) 
+		if ( between(parseInt(e.dataset.x), xm, xM)
+			&&
+			between(parseInt(e.dataset.y), ym, yM)
+			)
 			{
 			theseAreCloseCells.push(e);
 		}
@@ -226,8 +233,10 @@ function nearBombs(clickedCell) {
 			closeCounter++;
 		}
 	});
+	return closeCounter;
+};
 
-	clickedCell.innerText = closeCounter;
+function colorCounter(closeCounter) {
 	switch (closeCounter) {
 		case 0:
 			clickedCell.style.color = '#07fc03'; 
@@ -259,9 +268,6 @@ function nearBombs(clickedCell) {
 	}
 };
 
-// flaggedCells
-// flaggedBombs
-// TODO FIXARE FLAGCELL
 function flagCell(e) {
 	let id = e.target.dataset.id;
 	let tile = e.target;
@@ -287,7 +293,7 @@ function removeFromFlaggedCells(id, tile) {
 	if (tile.dataset.mine == 'true') {
 		flaggedBombs--;
 	}
-}
+};
 
 function between(num, min, max) {
 	if (min <= num && max >= num) {
@@ -299,4 +305,10 @@ function youWin() {
 	if (confirm('HAI VINTO! \n vuoi giocare un\'altra partita?')) {
 		startGame();
 	} 
-}
+};
+
+function watchOpenedCells() {
+	if (openedCells == safeCells) {
+		youWin();
+	}
+};

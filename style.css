@@ -41,7 +41,7 @@ main {
 	display: grid;
 	place-content: center;
 	cursor: pointer;
-	font-size: 2.5rem;
+	font-size: 1.8rem;
 	font-weight: bold;
 }
 .cell.over {
