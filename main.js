@@ -137,7 +137,6 @@ function generateBoard(size) {
 			cell.dataset.x = x;
 			cell.dataset.y = y;
 			cell.dataset.id = j;
-			cell.dataset.mine = 'false';
 			// click normale
 			cell.addEventListener('click', (e) => isBomb(e));
 			//click tasto dx
@@ -148,8 +147,6 @@ function generateBoard(size) {
 
 			if (bombs.includes(j)) {
 				cell.dataset.mine = true;
-				DomBombs.push(cell);
-				cell.style.backgroundColor = 'yellow';
 			}
 
 			board.appendChild(cell);
@@ -158,7 +155,6 @@ function generateBoard(size) {
 		}
 	}
 	safeCells = allCells.length - n_Bombs;
-	console.log(DomBombs);
 };
 
 function setCellsData() {
@@ -195,13 +191,13 @@ function isBomb(e) {
 };
 
 function gameOver() {
-	DomBombs.forEach(element => {
-		element.classList.remove('flagged');
-		element.classList.add('bomb');
-		element.innerHTML = '<i class="fas fa-bomb"></i>';
-	});
 	allCells.forEach(cell => {
 		cell.classList.add('over');
+		if (bombs.includes(parseInt(cell.dataset.id))) {
+			cell.classList.remove('flagged');
+			cell.classList.add('bomb');
+			cell.innerHTML = '<i class="fas fa-bomb"></i>';
+		}
 	});
 };
 
@@ -232,6 +228,7 @@ function nearBombs(clickedCell) {
 		if (e.dataset.mine == 'true') {
 			closeCounter++;
 		}
+		// TODO Eliminare dataset mine e trovare un altro modo per fare il conteggio delle bombe vicine alle caselle cliccate
 	});
 	return closeCounter;
 };
@@ -312,3 +309,20 @@ function watchOpenedCells() {
 		youWin();
 	}
 };
+
+function surrender() {
+	let surrender = confirm("confermi di voler abbandonare il gioco?");
+
+	if (surrender) {
+		board.innerHTML = "<h1>Reset in corso</h1>";
+		setTimeout(() => {
+			board.innerHTML = "<h1>Manca poco</h1>";
+		}, 1500);
+		setTimeout(() => {
+			board.innerHTML = "<h1>Puoi iniziare una nuova partita!</h1>";
+		}, 2900);
+		setTimeout(() => {
+			resetGame();
+		}, 3000);
+	}
+}
