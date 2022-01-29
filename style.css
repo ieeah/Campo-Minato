@@ -1,0 +1,78 @@
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 15px 10%;
+}
+
+main {
+	flex-grow: 1;
+	display: flex;
+	justify-content: center;
+}
+
+#boardgame {
+	display: flex;
+	flex-wrap: wrap;
+	aspect-ratio: 1 / 1;
+	max-height: 85vh;
+}
+#boardgame.over {
+	pointer-events: none;
+}
+
+.cell {
+	background-color: antiquewhite;
+	border: 1px solid black;
+	display: grid;
+	place-content: center;
+	cursor: pointer;
+	font-size: 2.5rem;
+	font-weight: bold;
+}
+.cell.over {
+	pointer-events: none;
+}
+
+.cell:hover {
+	filter: brightness(110%);
+}
+
+.cell.bomb {
+	background-color: tomato;
+	pointer-events: none;
+	font-size: 2.6rem;
+}
+
+.cell.not {
+	background-color: white;
+	cursor: default;
+}
+
+.cell.flagged {
+	background-color: orange;
+	font-size: 2.6rem;
+	background-image: url('./imgs/flag-solid.svg');
+	background-size: 50%;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+
+.cell.flagged:hover {
+	filter: brightness(130%);
+}
