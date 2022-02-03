@@ -184,5 +184,15 @@ footer {
   height: 80px;
   line-height: 80px;
 }
+footer a {
+  color: white;
+  transition: all 0.35s ease-in;
+  padding-left: 0.7rem;
+}
+footer a:hover {
+  background-color: #ef476f;
+  padding: 2.2rem 0.7rem 1.2rem 0.7rem;
+  border-radius: 4px;
+}
 
 /*# sourceMappingURL=style.css.map */

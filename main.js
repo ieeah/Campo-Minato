@@ -328,8 +328,7 @@ function surrender() {
 	}
 }
 
-// TODO - dimensioni della board cambiano dopo qualche click
+// FIXME - dimensioni della board cambiano dopo qualche click
 // FIXME - il conteggio delle caselle flaggate non tiene conto se una cella flaggata è davvero una bomba o meno
-// TODO - cambiare colore del testo del link nel footer
 // TODO - eliminare alert e confirm e fare una modale custom
 // TODO - migliorare animazioni bottoni
