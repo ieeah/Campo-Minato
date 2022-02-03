@@ -7,7 +7,10 @@ const startButton = document.getElementById('start');
 const surrenderButton = document.getElementById('surrender');
 const flagsDisplay = document.getElementById('flaggedCells');
 const remainingDisplay = document.getElementById('unexploded');
-
+const modal = document.querySelector('.modal');
+const modalMessage = document.querySelector('.modal_message');
+const modalConfirm = document.querySelector('.modal_button.confirm');
+const modalDeny = document.querySelector('.modal_button.deny');
 
 
 
@@ -25,7 +28,9 @@ let theseAreCloseCells = [];
 let closeCounter = 0;
 let clickedCell = null;
 let openedCells = 0;
-
+let objectCells = [];
+let safeCells = 0;
+let victory = null;
 settingTheUI();
 
 
@@ -48,18 +53,19 @@ function startGame() {
 	generateBombs();
 	// in base al valore della difficoltà genera la tabella con n bombe piazzate in modo random
 	generateBoard(size);
+	setCellsData();
 	settingTheUI();
 };
 
 function settingTheUI() {
 	flagsDisplay.innerText = flaggedCells.length;
 	remainingDisplay.innerText = n_Bombs;
-}
+};
 
 function updatingDisplays() {
 	flagsDisplay.innerText = flaggedCells.length;
 	remainingDisplay.innerText = n_Bombs - flaggedCells.length;
-}
+};
 
 function resetGame() {
 	gameIsOn = true;
@@ -75,11 +81,14 @@ function resetGame() {
 	closeCounter = 0;
 	clickedCell = null;
 	openedCells = 0;
+	objectCells = [];
+	safeCells = 0;
+	victory = null;
 
 	// displays
 	flagsDisplay.innerText = flaggedCells.length;
 	remainingDisplay.innerText = n_Bombs;
-}
+};
 
 function getBoardgameSize() {
 	switch (difficulty.value) {
@@ -100,27 +109,22 @@ function getBoardgameSize() {
 
 		case '4':
 			size = 20;
-			n_Bombs = 55;
+			n_Bombs = 58;
 			break;
-	}
+	};
 };
 
 function generateBombs() {
 	// empty the bombs list
 	bombs = [];
 	for (let i = 0; i < n_Bombs; i++) {
-		// let new_bomb = {};
-		// new_bomb.x = Math.floor((Math.random() * size) + 1);
-		// new_bomb.y = Math.floor((Math.random() * size) + 1);
-		// bombs.push(new_bomb);
-		let n = Math.floor(Math.random() * Math.pow(size, 2));
-		if (!bombs.includes(n)) {
-			bombs.push(n);
+		let new_bomb = {};
+		let id = Math.floor(Math.random() * Math.pow(size, 2));
+		if (!bombs.includes(id)) {
+			bombs.push(id);
 		} else i--;
-		console.log(bombs);
 	}
-
-
+	console.log(bombs);
 };
 
 function generateBoard(size) {
@@ -138,7 +142,6 @@ function generateBoard(size) {
 			cell.dataset.x = x;
 			cell.dataset.y = y;
 			cell.dataset.id = j;
-			cell.dataset.mine = 'false';
 			// click normale
 			cell.addEventListener('click', (e) => isBomb(e));
 			//click tasto dx
@@ -149,7 +152,6 @@ function generateBoard(size) {
 
 			if (bombs.includes(j)) {
 				cell.dataset.mine = true;
-				DomBombs.push(cell);
 			}
 
 			board.appendChild(cell);
@@ -157,44 +159,51 @@ function generateBoard(size) {
 			j++;
 		}
 	}
+	safeCells = allCells.length - n_Bombs;
+};
 
-	console.log(DomBombs);
+function setCellsData() {
+	allCells.forEach((cell, i) => {
+		let o = {};
+		o['id'] = i;
+		o['counter'] = nearBombs(cell);
+		o['x'] = cell.dataset.x;
+		o['y'] = cell.dataset.y;
+		objectCells.push(o);
+	});
+	console.log(objectCells);
 };
 
 function isBomb(e) {
 	// reference to the clicked cell
 	clickedCell = e.target;
+	clickId = parseInt(clickedCell.dataset.id);
 
 	if (clickedCell.classList.contains('flagged')) {
 		return false;
 	}
 
-	if (DomBombs.includes(clickedCell)) {
+	if (bombs.includes(clickId)) {
 		gameOver();
 	} else {
 		clickedCell.classList.add('not');
-		nearBombs(clickedCell);
+		clickedCell.innerText = objectCells[clickId].counter;
 		openedCells++;
-		console.log(allCells.length - openedCells);
+		colorCounter(objectCells[clickId].counter);
 	}
 	
+	// watchOpenedCells();
 };
 
-// function haveYouWin() {
-// 	let totNoBombs = allCells.length - n_Bombs;
-// 	if (openedCells == totNoBombs) {
-// 		youWin();
-// 	}
-// }
-
 function gameOver() {
-	DomBombs.forEach(element => {
-		element.classList.remove('flagged');
-		element.classList.add('bomb');
-		element.innerHTML = '<i class="fas fa-bomb"></i>';
-	});
+	victory = false;
 	allCells.forEach(cell => {
 		cell.classList.add('over');
+		if (bombs.includes(parseInt(cell.dataset.id))) {
+			cell.classList.remove('flagged');
+			cell.classList.add('bomb');
+			cell.innerHTML = '<i class="fas fa-bomb"></i>';
+		}
 	});
 };
 
@@ -212,10 +221,10 @@ function nearBombs(clickedCell) {
 	let yM = y + 1;
 
 	allCells.forEach(e => {
-		if (
-			(parseInt(e.dataset.x) == xm || parseInt(e.dataset.x) == x || parseInt(e.dataset.x) == xM) 
-			&& 
-			(parseInt(e.dataset.y) == ym || parseInt(e.dataset.y) == y || parseInt(e.dataset.y) == yM)) 
+		if ( between(parseInt(e.dataset.x), xm, xM)
+			&&
+			between(parseInt(e.dataset.y), ym, yM)
+			)
 			{
 			theseAreCloseCells.push(e);
 		}
@@ -225,9 +234,12 @@ function nearBombs(clickedCell) {
 		if (e.dataset.mine == 'true') {
 			closeCounter++;
 		}
+		// TODO Eliminare dataset mine e trovare un altro modo per fare il conteggio delle bombe vicine alle caselle cliccate
 	});
+	return closeCounter;
+};
 
-	clickedCell.innerText = closeCounter;
+function colorCounter(closeCounter) {
 	switch (closeCounter) {
 		case 0:
 			clickedCell.style.color = '#07fc03'; 
@@ -259,9 +271,6 @@ function nearBombs(clickedCell) {
 	}
 };
 
-// flaggedCells
-// flaggedBombs
-// TODO FIXARE FLAGCELL
 function flagCell(e) {
 	let id = e.target.dataset.id;
 	let tile = e.target;
@@ -273,7 +282,6 @@ function flagCell(e) {
 			flaggedBombs--;
 			if (flaggedCells.length == n_Bombs) {
 				youWin();
-				// TODO - fare funzione vittoria
 			}
 		}
 	} else removeFromFlaggedCells(id, tile);
@@ -287,7 +295,7 @@ function removeFromFlaggedCells(id, tile) {
 	if (tile.dataset.mine == 'true') {
 		flaggedBombs--;
 	}
-}
+};
 
 function between(num, min, max) {
 	if (min <= num && max >= num) {
@@ -296,7 +304,50 @@ function between(num, min, max) {
 };
 
 function youWin() {
-	if (confirm('HAI VINTO! \n vuoi giocare un\'altra partita?')) {
-		startGame();
-	} 
+	victory = true;
+	showModal();
+};
+
+function watchOpenedCells() {
+	if (openedCells == safeCells) {
+		youWin();
+	}
+};
+
+function surrender() {
+	victory = 'surrender';
+	let surrender = confirm("confermi di voler abbandonare il gioco?");
+
+	if (surrender) {
+		board.innerHTML = "<h1>Reset in corso</h1>";
+		setTimeout(() => {
+			board.innerHTML = "<h1>Manca poco</h1>";
+		}, 1500);
+		setTimeout(() => {
+			board.innerHTML = "<h1>Puoi iniziare una nuova partita!</h1>";
+		}, 2900);
+		setTimeout(() => {
+			resetGame();
+		}, 3000);
+	}
 }
+
+function showModal() {
+	setModalMessage();
+	modal.classList.remove('hidden');
+	
+}
+
+function setModalMessage() {
+	if (victory) {
+		modalMessage.innerText = 'Yeeeeeeeah! YOU WIN! \n Would you like to have a rematch!?';
+	} else if (!victory) {
+		modalMessage.innerText = 'Oh what a Pity! \n Should we have another match!?'
+	} else if (victory === 'surrender') {
+		modalMessage.innerText = 'Oh... ok... \n Are you sure!?'
+	}
+}
+
+// FIXME - il conteggio delle caselle flaggate non tiene conto se una cella flaggata è davvero una bomba o meno
+// TODO - finire animazione modale e conferma (la modale appare con il messaggio corretto, ma devo fare in modo che quando clicco sui bottoni facciamo varie azioni)
+// TODO - migliorare animazioni bottoni
