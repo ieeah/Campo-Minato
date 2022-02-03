@@ -50,7 +50,7 @@
 		</div>
 
 		<div id="boardgame">
-
+			<h1 class="start_message">Choose the difficulty level and start playing!</h1>
 		</div>
 	</main>
 	<footer>
@@ -58,6 +58,19 @@
 			Developed for practice purposes by <a href="https://github.com/ieeah">Ieeah</a>
 		</strong>
 	</footer>
+
+	<div class="modal hidden">
+		<div class="overlay"></div>
+		<div class="modal_show">
+			<h3 class="modal_message">
+				Sei sicuro di voler annullare la partita?
+			</h3>
+			<div class="actions">
+				<button class="modal_button confirm">Ok</button>
+				<button class="modal_button deny">Nope</button>
+			</div>
+		</div>
+	</div>
 
 	<script src="main.js"></script>
 </body>

@@ -7,7 +7,10 @@ const startButton = document.getElementById('start');
 const surrenderButton = document.getElementById('surrender');
 const flagsDisplay = document.getElementById('flaggedCells');
 const remainingDisplay = document.getElementById('unexploded');
-
+const modal = document.querySelector('.modal');
+const modalMessage = document.querySelector('.modal_message');
+const modalConfirm = document.querySelector('.modal_button.confirm');
+const modalDeny = document.querySelector('.modal_button.deny');
 
 
 
@@ -27,6 +30,7 @@ let clickedCell = null;
 let openedCells = 0;
 let objectCells = [];
 let safeCells = 0;
+let victory = null;
 settingTheUI();
 
 
@@ -79,6 +83,7 @@ function resetGame() {
 	openedCells = 0;
 	objectCells = [];
 	safeCells = 0;
+	victory = null;
 
 	// displays
 	flagsDisplay.innerText = flaggedCells.length;
@@ -187,10 +192,11 @@ function isBomb(e) {
 		colorCounter(objectCells[clickId].counter);
 	}
 	
-	watchOpenedCells();
+	// watchOpenedCells();
 };
 
 function gameOver() {
+	victory = false;
 	allCells.forEach(cell => {
 		cell.classList.add('over');
 		if (bombs.includes(parseInt(cell.dataset.id))) {
@@ -298,11 +304,8 @@ function between(num, min, max) {
 };
 
 function youWin() {
-	if (confirm('HAI VINTO! \n vuoi giocare un\'altra partita?')) {
-		startGame();
-	}
-
-	// TODO - fare funzione vittoria
+	victory = true;
+	showModal();
 };
 
 function watchOpenedCells() {
@@ -312,6 +315,7 @@ function watchOpenedCells() {
 };
 
 function surrender() {
+	victory = 'surrender';
 	let surrender = confirm("confermi di voler abbandonare il gioco?");
 
 	if (surrender) {
@@ -328,7 +332,22 @@ function surrender() {
 	}
 }
 
-// FIXME - dimensioni della board cambiano dopo qualche click
+function showModal() {
+	setModalMessage();
+	modal.classList.remove('hidden');
+	
+}
+
+function setModalMessage() {
+	if (victory) {
+		modalMessage.innerText = 'Yeeeeeeeah! YOU WIN! \n Would you like to have a rematch!?';
+	} else if (!victory) {
+		modalMessage.innerText = 'Oh what a Pity! \n Should we have another match!?'
+	} else if (victory === 'surrender') {
+		modalMessage.innerText = 'Oh... ok... \n Are you sure!?'
+	}
+}
+
 // FIXME - il conteggio delle caselle flaggate non tiene conto se una cella flaggata è davvero una bomba o meno
-// TODO - eliminare alert e confirm e fare una modale custom
+// TODO - finire animazione modale e conferma (la modale appare con il messaggio corretto, ma devo fare in modo che quando clicco sui bottoni facciamo varie azioni)
 // TODO - migliorare animazioni bottoni

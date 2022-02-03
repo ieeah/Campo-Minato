@@ -5,12 +5,11 @@ header {
 	padding: 2rem 3rem;
 	align-items: center;
 	justify-content: space-between;
-}
-
-h1 {
-	font-size: 3.5rem;
-	transform: rotate(-2deg);
-	text-shadow: 2px 5px $shadow;
+	h1 {
+		font-size: 3.5rem;
+		transform: rotate(-2deg);
+		text-shadow: 2px 5px $shadow;
+	}
 }
 
 .displays {
@@ -32,7 +31,7 @@ h1 {
 .display_container {
 	background-color: $flag-color;
 	border-radius: 20px;
-	padding: 2.2rem;
+	padding: 1.5rem;
 	font-weight: bold;
 	color: white;
 	z-index: 2;
