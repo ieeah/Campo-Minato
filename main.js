@@ -276,7 +276,6 @@ function flagCell(e) {
 			flaggedBombs--;
 			if (flaggedCells.length == n_Bombs) {
 				youWin();
-				// TODO - fare funzione vittoria
 			}
 		}
 	} else removeFromFlaggedCells(id, tile);
@@ -301,7 +300,9 @@ function between(num, min, max) {
 function youWin() {
 	if (confirm('HAI VINTO! \n vuoi giocare un\'altra partita?')) {
 		startGame();
-	} 
+	}
+
+	// TODO - fare funzione vittoria
 };
 
 function watchOpenedCells() {
@@ -326,3 +327,9 @@ function surrender() {
 		}, 3000);
 	}
 }
+
+// TODO - dimensioni della board cambiano dopo qualche click
+// FIXME - il conteggio delle caselle flaggate non tiene conto se una cella flaggata è davvero una bomba o meno
+// TODO - cambiare colore del testo del link nel footer
+// TODO - eliminare alert e confirm e fare una modale custom
+// TODO - migliorare animazioni bottoni

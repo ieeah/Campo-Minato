@@ -1,0 +1,147 @@
+@import './vars.scss';
+
+// reset
+
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	font-family: 'Nanum Gothic', sans-serif;
+	background-color: $bg-color;
+	color: $bomb;
+	background-image: url('./imgs/wave-haikei.svg');
+	background-size: cover;
+	position: relative;
+}
+
+main {
+	flex-grow: 1;
+	display: flex;
+	justify-content: center;
+	.options {
+		position: absolute;
+		right: 2rem;
+		top: 50%;
+		transform: translateY(-50%);
+		height: 20vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		.options_wrap {
+			margin-bottom: $fz-16;
+			label {
+				display: block;
+				margin-bottom: .2rem;
+				color: $clear;
+				font-weight: bold;
+				font-size: $fz-14;
+			}
+			select {
+				width: 100%;
+				background-color: $bomb;
+				color: $clear;
+				padding: .5rem 1rem;
+				border: none;
+				border-radius: 5px;
+				font-size: $fz-12;
+			}
+		}
+		button {
+			padding: .8rem 1rem;
+			background: rgb(239,71,111);
+			background: linear-gradient(63deg, rgba(239,71,111,1) 11%, rgba(239,71,111,0.2889356426164216) 77%);  
+			color: $clear;
+			font-size: $fz-12;
+			text-transform: capitalize;
+			border-radius: 80px;
+			border: none;
+			cursor: pointer;
+			margin-bottom: $fz-12;
+			transition: all .2s ease-out;
+			&:hover {
+				color: $bomb;
+				background: rgb(77,25,77);
+				background: linear-gradient(63deg, rgba(77,25,77,0.31414572665003504) 25%, rgba(77,25,77,1) 77%); 
+			}
+		}
+	}
+}
+
+@import './header';
+
+// boardgame
+
+#boardgame {
+	display: flex;
+	flex-wrap: wrap;
+	aspect-ratio: 1 / 1;
+	max-height: 85vh;
+	// border: 3px solid $bomb;
+}
+
+#boardgame.over {
+	pointer-events: none;
+}
+
+// cells
+
+.cell {
+	background-color: $shadow;
+	border: 1px solid $bomb;
+	display: grid;
+	place-content: center;
+	cursor: pointer;
+	font-size: 1.8rem;
+	font-weight: bold;
+}
+
+.cell.over {
+	pointer-events: none;
+}
+
+.cell:hover {
+	filter: brightness(200%);
+}
+
+.cell.bomb {
+	background-color: $bomb;
+	color: $shadow;
+	pointer-events: none;
+	font-size: 2rem;
+}
+
+.cell.not {
+	background-color: $flag-color;
+	cursor: default;
+}
+
+.cell.not:hover {
+	filter: brightness(100%);
+}
+
+.cell.flagged {
+	background-color: $bomb;
+	font-size: 2.6rem;
+	background-image: url('./imgs/flag-solid.svg');
+	background-size: 50%;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.cell.flagged:hover {
+	filter: brightness(130%);
+}
+
+footer {
+	text-align: center;
+	height: 80px;
+	line-height: 80px;
+}
