@@ -77,8 +77,6 @@ const resetGame = () => {
   logData();
 };
 
-
-
 /**
  * Funzione che setta il numero di celle e di bombe in base al livello di difficoltà selezionato dall'utente.
  */
@@ -133,18 +131,19 @@ const setClickedCell = (id, x, y, cellReference) => {
  * Generazione delle celle del DOM, di ogni cella viene salvata una referenza alla cella stessa in virtualCells.
  */
 const generateBoard = () => {
+  console.log("nuova tavola");
   // creo x celle per coprire le dimensioni del campo
   board.innerHTML = "";
   let j = 0;
   for (let y = 1; y <= boardSize; y++) {
     for (let x = 1; x <= boardSize; x++) {
       const cell = document.createElement("div");
-      
+
       cell.classList.add("cell");
       cell.style.width = `calc(100% / ${boardSize})`;
       cell.style.height = `calc(100% / ${boardSize})`;
       cell.dataset.id = j;
-      
+
       const cellId = parseInt(cell.dataset.id);
       // click normale, si setta la cella cliccata e si controlla che sia o meno una bomba
       cell.addEventListener("click", () => {
@@ -159,7 +158,7 @@ const generateBoard = () => {
       });
 
       if (bombs.includes(cellId)) {
-        virtualBombs.push(cellId);
+        virtualBombs.push(cell);
       }
 
       virtualCells[cellId] = {
@@ -173,49 +172,47 @@ const generateBoard = () => {
   }
 };
 
-// TODO: FARE FUNZIONE PER GAME OVER
+const gameOver = () => {
+  highlightBombs();
+  alert("Oh no!\nHai perso la partita!\nTranquillo, puoi farne un'altra!")
+};
+
+/**
+ * Controlla se la cella cliccata sia una bomba o meno.
+ */
 const isBomb = (id) => {
-  bombs.includes(id) ? alert("BOMBA!") : alert("NESSUNA BOMBA!");
-}
+  bombs.includes(id) ? gameOver() : alert("implementa conteggio bombe vicine");
+};
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * Evidenzia tutte le celle che sono delle bombe.
+ */
+const highlightBombs = () => {
+  virtualBombs.forEach(bomb => {
+    bomb.classList.remove("flagged");
+    bomb.classList.add("bomb");
+    bomb.innerHTML = '<i class="fas fa-bomb"></i>';
+  });
+};
 
 //////////////////////////////////
 
 // DEV UTILS
- function logData() {
-   console.log("logData:", {
-     allCells,
-     n_Bombs,
-     gameIsOn,
-     victory,
-     remainingBombs,
-     flaggedBombs,
-     theseAreCloseCells,
-     closeCounter,
-     clickedCell,
-     virtualCells,
-     flaggedCells,
-     bombs,
-     boardSize,
-   });
- }
+function logData() {
+  console.log("logData:", {
+    allCells,
+    n_Bombs,
+    gameIsOn,
+    victory,
+    remainingBombs,
+    flaggedBombs,
+    theseAreCloseCells,
+    closeCounter,
+    clickedCell,
+    virtualCells,
+    flaggedCells,
+    bombs,
+    boardSize,
+  });
+}
