@@ -37,9 +37,13 @@ let clickedCell = { id: null, DOMCell: { x: null, y: null, cell: null } };
 let virtualCells = [];
 // una flag per definire se la partita è stata vinta o meno.
 let victory = null;
+
+let bombs = []; // array di id delle celle che sono bombe
 // setTheUI();
 startButton.addEventListener("click", () => startGame());
 surrenderButton.addEventListener("click", () => surrender());
+
+logData();
 
 // TODO: fare una funzione per una splash screen?
 
@@ -70,22 +74,10 @@ const resetGame = () => {
   bombs = [];
   boardSize = 10;
   // setTheUI();
-  console.log("resetGame:", {
-    allCells,
-    n_Bombs,
-    gameIsOn,
-    victory,
-    remainingBombs,
-    flaggedBombs,
-    theseAreCloseCells,
-    closeCounter,
-    clickedCell,
-    virtualCells,
-    flaggedCells,
-    bombs,
-    boardSize,
-  });
+  logData();
 };
+
+
 
 /**
  * Funzione che setta il numero di celle e di bombe in base al livello di difficoltà selezionato dall'utente.
@@ -133,6 +125,8 @@ const generateBombsIds = () => {
  */
 const setClickedCell = (id, x, y, cellReference) => {
   clickedCell = { id: id, DOMCell: { x: x, y: y, cell: cellReference } };
+
+  console.dir("clickedCell:", { clickedCell });
 };
 
 /**
@@ -145,30 +139,31 @@ const generateBoard = () => {
   for (let y = 1; y <= boardSize; y++) {
     for (let x = 1; x <= boardSize; x++) {
       const cell = document.createElement("div");
-
+      
       cell.classList.add("cell");
       cell.style.width = `calc(100% / ${boardSize})`;
       cell.style.height = `calc(100% / ${boardSize})`;
       cell.dataset.id = j;
-
+      
+      const cellId = parseInt(cell.dataset.id);
       // click normale, si setta la cella cliccata e si controlla che sia o meno una bomba
       cell.addEventListener("click", () => {
-        setClickedCell(j, x, y, cell);
-        isBomb(j);
+        setClickedCell(cellId, x, y, cell);
+        isBomb(cellId);
       });
 
       //click tasto dx, si avvia la funzione per il flaggin della cella clicclata
       cell.addEventListener("contextmenu", () => {
         e.preventDefault();
-        flagCell(j);
+        flagCell(cellId);
       });
 
-      if (bombs.includes(j)) {
-        virtualBombs.push(j);
+      if (bombs.includes(cellId)) {
+        virtualBombs.push(cellId);
       }
 
-      virtualCells[j] = {
-        id: j,
+      virtualCells[cellId] = {
+        id: cellId,
         DOMCell: { x: x, y: y, cellReference: cell },
       };
 
@@ -176,5 +171,51 @@ const generateBoard = () => {
       j++;
     }
   }
-  safeCells = allCells.length - n_Bombs;
 };
+
+// TODO: FARE FUNZIONE PER GAME OVER
+const isBomb = (id) => {
+  bombs.includes(id) ? alert("BOMBA!") : alert("NESSUNA BOMBA!");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////
+
+// DEV UTILS
+ function logData() {
+   console.log("logData:", {
+     allCells,
+     n_Bombs,
+     gameIsOn,
+     victory,
+     remainingBombs,
+     flaggedBombs,
+     theseAreCloseCells,
+     closeCounter,
+     clickedCell,
+     virtualCells,
+     flaggedCells,
+     bombs,
+     boardSize,
+   });
+ }
