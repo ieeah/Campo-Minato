@@ -196,6 +196,13 @@ const highlightBombs = () => {
   });
 };
 
+///////////////////////////////////
+
+// TODO: Display bombe flaggate e rimanenti.
+// TODO: Quando tutte le bombe vere sono state flaggate alert vittoria.
+// TODO: In funzione gameover() disattivare i click su tutta la board.
+// TODO: contare e loggare le bombe vicine.
+
 //////////////////////////////////
 
 // DEV UTILS
