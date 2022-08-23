@@ -222,15 +222,11 @@ function collectSurroundingCells(currentCell) {
   let surroundingCells = [];
   let x = parseInt(currentCell.dataset.x);
   let y = parseInt(currentCell.dataset.y);
-  let xm = x - 1;
-  let xM = x + 1;
-  let ym = y - 1;
-  let yM = y + 1;
 
   allCells.forEach((e) => {
     if (
-      between(parseInt(e.dataset.x), xm, xM) &&
-      between(parseInt(e.dataset.y), ym, yM)
+      between(x, x-1, x+1) &&
+      between(y, y-1, y+1)
     ) {
       e === currentCell ? null : surroundingCells.push(e);
     }

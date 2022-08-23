@@ -142,17 +142,17 @@ const generateBoard = () => {
       cell.classList.add("cell");
       cell.style.width = `calc(100% / ${boardSize})`;
       cell.style.height = `calc(100% / ${boardSize})`;
-      cell.dataset.id = j;
+      cell.id = j;
 
-      const cellId = parseInt(cell.dataset.id);
+      const cellId = parseInt(j);
       // click normale, si setta la cella cliccata e si controlla che sia o meno una bomba
       cell.addEventListener("click", () => {
         setClickedCell(cellId, x, y, cell);
-        isBomb(cellId);
+        handleClick(cellId);
       });
 
       //click tasto dx, si avvia la funzione per il flaggin della cella clicclata
-      cell.addEventListener("contextmenu", () => {
+      cell.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         flagCell(cellId);
       });
@@ -170,38 +170,166 @@ const generateBoard = () => {
       j++;
     }
   }
+  board.style.pointerEvents = "all";
 };
 
+/**
+ * Manda un alert di sconfitta al giocatore, chiama la funzione highlightBombs() e disattiva tutti i click sulla tavola di gioco.
+ */
 const gameOver = () => {
   highlightBombs();
-  alert("Oh no!\nHai perso la partita!\nTranquillo, puoi farne un'altra!")
+  board.style.pointerEvents = "none";
+  alert("Oh no!\nHai perso la partita!\nTranquillo, puoi farne un'altra!");
 };
+
+/**
+ * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
+ */
+const handleClick = (id) => {
+  cell = virtualCells[id].DOMCell.cellReference;
+  if (isABomb(id)) {
+    gameOver();
+  } else {
+    defineCloseCells(id);
+    closeBombs = countCloseBombs();
+    cell.innerText = closeBombs;
+    cell.classList.add("not");
+    cell.style.color = colorCounter(closeBombs);
+  }
+};
+
+/**
+ * Colora il testo della cella in base al numero di bombe tra le celle vicine
+ */
+function colorCounter(closeCounter) {
+  switch (closeCounter) {
+    case 0:
+      return "#07fc03";
+      break;
+    case 1:
+      return "#00ffb7";
+      break;
+    case 2:
+      return "#f743eb";
+      break;
+    case 3:
+      return "#ff3838";
+      break;
+    case 4:
+      return "#ff8438";
+      break;
+    case 5:
+      return "#0011ff";
+      break;
+    case 6:
+      return "#5b00a1";
+      break;
+    case 7:
+      return "#002736";
+      break;
+    case 8:
+      return "#592700";
+      break;
+  }
+}
 
 /**
  * Controlla se la cella cliccata sia una bomba o meno.
  */
-const isBomb = (id) => {
-  bombs.includes(id) ? gameOver() : alert("implementa conteggio bombe vicine");
+const isABomb = (id) => {
+  return bombs.includes(id) ? true : false;
 };
-
 
 /**
  * Evidenzia tutte le celle che sono delle bombe.
  */
 const highlightBombs = () => {
-  virtualBombs.forEach(bomb => {
+  virtualBombs.forEach((bomb) => {
     bomb.classList.remove("flagged");
     bomb.classList.add("bomb");
     bomb.innerHTML = '<i class="fas fa-bomb"></i>';
   });
 };
 
+/**
+ * Permette di flaggare e bloccare le celle che si ritiene essere bombe
+ */
+const flagCell = (id) => {
+  cell = virtualCells[id].DOMCell.cellReference;
+  if (!flaggedCells.includes(id)) {
+    cell.classList.toggle("flagged");
+    flaggedCells.push(id);
+  } else {
+    flaggedCells.splice(flaggedCells.indexOf(id), 1);
+    cell.classList.toggle("flagged");
+  }
+  
+}
+
+/**
+ * Controlla quante siano le bombe tra le 8 celle adiacenti a clickedCell
+ */
+const countCloseBombs = () => {
+  let counter = 0;
+  theseAreCloseCells.forEach((cell) => {
+    if (bombs.includes(cell.id)) {
+      counter++;
+    }
+  });
+  return counter;
+};
+
+/**
+ * Definisce quali siano le celle adiacenti a clickedCell e le raccoglie in theseAreCloseCells.
+ */
+const defineCloseCells = (_id) => {
+  let surroundingCells = [];
+  let x = virtualCells[_id].DOMCell.x;
+  let y = virtualCells[_id].DOMCell.y;
+
+  virtualCells.forEach((cell, index) => {
+    if (between(x, cell.DOMCell.x) && between(y, cell.DOMCell.y)) {
+      index === _id
+        ? null
+        : surroundingCells.push({
+            id: index,
+            x: cell.DOMCell.x,
+            y: cell.DOMCell.y,
+            cell: cell.DOMCell.cellReference,
+          });
+    }
+  });
+  theseAreCloseCells = [...surroundingCells];
+};
+
+/**
+ * Controlla se le coordinate della cella in esame sia compresa in un determinato range.
+ */
+function between(ref, toCompare) {
+  if (toCompare >= ref - 1 && toCompare <= ref + 1) {
+    return true;
+  } else return false;
+}
+
+/**
+ * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
+ */
+const surrender = () => {
+  if (gameIsOn) {
+    victory = "surrender";
+    let sure = confirm("Sicuro di volerti arrendere?");
+    sure ? gameOver() : alert("Ottima scelta!\nIn bocca al lupo!");
+  } else {
+    alert("Almeno inizia a giocare prima di arrenderti!");
+  }
+};
+
 ///////////////////////////////////
 
 // TODO: Display bombe flaggate e rimanenti.
 // TODO: Quando tutte le bombe vere sono state flaggate alert vittoria.
-// TODO: In funzione gameover() disattivare i click su tutta la board.
 // TODO: contare e loggare le bombe vicine.
+// TODO: quando una celle è flaggata non deve più percepire i click con il tasto sx
 
 //////////////////////////////////
 
@@ -222,4 +350,8 @@ function logData() {
     bombs,
     boardSize,
   });
+}
+
+function highlightClickedCell(id) {
+  virtualCells[id].DOMCell.cellReference.style.backgroundColor = "yellow";
 }
