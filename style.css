@@ -120,8 +120,8 @@ main .options .options_wrap select {
 }
 main .options button {
   padding: 0.8rem 1rem;
-  background: #ef476f;
-  background: linear-gradient(63deg, #ef476f 11%, rgba(239, 71, 111, 0.2889356426) 77%);
+  background: rgb(239, 71, 111);
+  background: linear-gradient(63deg, rgb(239, 71, 111) 11%, rgba(239, 71, 111, 0.2889356426) 77%);
   color: white;
   font-size: 1.2rem;
   text-transform: capitalize;
@@ -134,8 +134,8 @@ main .options button {
 }
 main .options button:hover {
   color: #ef476f;
-  background: #4d194d;
-  background: linear-gradient(63deg, rgba(77, 25, 77, 0.3141457267) 25%, #4d194d 77%);
+  background: rgb(77, 25, 77);
+  background: linear-gradient(63deg, rgba(77, 25, 77, 0.3141457267) 25%, rgb(77, 25, 77) 77%);
 }
 main .options button:hover:before {
   width: 100%;
@@ -171,16 +171,17 @@ header h1 {
   display: flex;
   align-items: center;
   width: 35%;
-  justify-content: space-between;
+  justify-content: end;
   padding-right: 2rem;
 }
 
 .display_wrap {
   padding: 5px;
-  background: #0b525b;
-  background: linear-gradient(128deg, #0b525b 11%, #ef476f 90%);
+  background: rgb(11, 82, 91);
+  background: linear-gradient(128deg, rgb(11, 82, 91) 11%, rgb(239, 71, 111) 90%);
   border-radius: 25px;
   opacity: 0.7;
+  margin-left: 2rem;
 }
 
 .display_container {

@@ -39,7 +39,7 @@ let virtualCells = [];
 let victory = null;
 
 let bombs = []; // array di id delle celle che sono bombe
-// setTheUI();
+setTheUI();
 startButton.addEventListener("click", () => startGame());
 surrenderButton.addEventListener("click", () => surrender());
 
@@ -54,6 +54,7 @@ const startGame = () => {
   resetGame();
   getDifficultyLevel();
   generateBombsIds();
+  setTheUI();
   generateBoard();
 };
 /**
@@ -73,7 +74,7 @@ const resetGame = () => {
   flaggedCells = [];
   bombs = [];
   boardSize = 10;
-  // setTheUI();
+  setTheUI();
   logData();
 };
 
@@ -102,7 +103,7 @@ const getDifficultyLevel = () => {
       n_Bombs = 60;
       break;
   }
-  console.log("difficulty:", { level: difficulty.level, boardSize, n_Bombs });
+  console.log("difficulty:", { level: difficulty.value, boardSize, n_Bombs });
 };
 
 /**
@@ -115,7 +116,7 @@ const generateBombsIds = () => {
       bombs.push(randomId);
     }
   }
-  console.log("bombs ids:", { bombs });
+  console.log("bombs ids:", bombs.sort((a, b) => a - b));
 };
 
 /**
@@ -123,8 +124,6 @@ const generateBombsIds = () => {
  */
 const setClickedCell = (id, x, y, cellReference) => {
   clickedCell = { id: id, DOMCell: { x: x, y: y, cell: cellReference } };
-
-  console.dir("clickedCell:", { clickedCell });
 };
 
 /**
@@ -187,16 +186,26 @@ const gameOver = () => {
  */
 const handleClick = (id) => {
   cell = virtualCells[id].DOMCell.cellReference;
-  if (isABomb(id)) {
-    gameOver();
-  } else {
-    defineCloseCells(id);
-    closeBombs = countCloseBombs();
-    cell.innerText = closeBombs;
-    cell.classList.add("not");
-    cell.style.color = colorCounter(closeBombs);
+  if (!flaggedCells.includes(id)) {
+    if (isABomb(id)) {
+      gameOver();
+    } else {
+      defineCloseCells(id);
+      closeBombs = countCloseBombs();
+      cell.innerText = closeBombs;
+      cell.classList.add("not");
+      cell.style.color = colorCounter(closeBombs);
+      setTheUI();
+    }
   }
 };
+
+function setTheUI() {
+  flagsDisplay.innerText = flaggedCells.length;
+  remainingDisplay.innerText =
+    n_Bombs - flaggedCells.length < 0 ? "0" : n_Bombs - flaggedCells.length;
+    allBombsFlagged();
+}
 
 /**
  * Colora il testo della cella in base al numero di bombe tra le celle vicine
@@ -233,6 +242,19 @@ function colorCounter(closeCounter) {
   }
 }
 
+function allBombsFlagged() {
+  console.log(flaggedBombs, n_Bombs);
+  if(flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
+    alert("hai vinto!");
+    board.style.pointerEvents = "none";
+    // youWin();
+  } else {
+    if(flaggedCells.length >= n_Bombs) {
+      alert("Hai flaggato qualche casella ancora valida!");
+    }
+  }
+}
+
 /**
  * Controlla se la cella cliccata sia una bomba o meno.
  */
@@ -259,12 +281,18 @@ const flagCell = (id) => {
   if (!flaggedCells.includes(id)) {
     cell.classList.toggle("flagged");
     flaggedCells.push(id);
+    if (bombs.includes(id)) {
+      flaggedBombs++;
+    }
   } else {
     flaggedCells.splice(flaggedCells.indexOf(id), 1);
     cell.classList.toggle("flagged");
+    if (bombs.includes(id)) {
+      flaggedBombs--;
+    }
   }
-  
-}
+  setTheUI();
+};
 
 /**
  * Controlla quante siano le bombe tra le 8 celle adiacenti a clickedCell
@@ -315,21 +343,22 @@ function between(ref, toCompare) {
  * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
  */
 const surrender = () => {
+  console.log({ gameIsOn });
   if (gameIsOn) {
     victory = "surrender";
     let sure = confirm("Sicuro di volerti arrendere?");
-    sure ? gameOver() : alert("Ottima scelta!\nIn bocca al lupo!");
+    if (sure) {
+      gameIsOn = false;
+      gameOver();
+    } else {
+      alert("Ottima scelta!\nIn bocca al lupo!");
+    }
   } else {
     alert("Almeno inizia a giocare prima di arrenderti!");
   }
 };
 
 ///////////////////////////////////
-
-// TODO: Display bombe flaggate e rimanenti.
-// TODO: Quando tutte le bombe vere sono state flaggate alert vittoria.
-// TODO: contare e loggare le bombe vicine.
-// TODO: quando una celle è flaggata non deve più percepire i click con il tasto sx
 
 //////////////////////////////////
 
