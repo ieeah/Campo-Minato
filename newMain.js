@@ -116,7 +116,10 @@ const generateBombsIds = () => {
       bombs.push(randomId);
     }
   }
-  console.log("bombs ids:", bombs.sort((a, b) => a - b));
+  console.log(
+    "bombs ids:",
+    bombs.sort((a, b) => a - b)
+  );
 };
 
 /**
@@ -192,6 +195,7 @@ const handleClick = (id) => {
     } else {
       defineCloseCells(id);
       closeBombs = countCloseBombs();
+      checkSurroundingCells(id);
       cell.innerText = closeBombs;
       cell.classList.add("not");
       cell.style.color = colorCounter(closeBombs);
@@ -200,11 +204,45 @@ const handleClick = (id) => {
   }
 };
 
+/**
+ * Verifica se le celle adiacenti hanno contatore zero, in quel caso gli applica la funzione handleClick
+ */
+function checkSurroundingCells(_id) {
+  // let x = virtualCells[_id].DOMCell.x;
+  // let y = virtualCells[_id].DOMCell.y;
+  // let cell = virtualCells[_id].DOMCell.cellReference;
+  // setClickedCell(_id, x, y, cell);
+  // defineCloseCells(_id);
+  // closeBombs = countCloseBombs();
+  // console.log({closeBombs, theseAreCloseCells});
+  // theseAreCloseCells.forEach(cell => {
+    // if(closeBombs === 0) {
+    //   if (!flaggedCells.includes(id)) {
+    //     if (isABomb(id)) {
+    //       gameOver();
+    //     } else {
+    //       defineCloseCells(id);
+    //       closeBombs = countCloseBombs();
+    //       checkSurroundingCells(id);
+    //       cell.innerText = closeBombs;
+    //       cell.classList.add("not");
+    //       cell.style.color = colorCounter(closeBombs);
+    //       setTheUI();
+    //     }
+    //   }
+    // }
+  // });
+}
+
+/**
+ * Stampa a schermo il contatore delle celle flaggate e delle bombe rimanenti.
+ * Chiama allBombsFlagged().
+ */
 function setTheUI() {
   flagsDisplay.innerText = flaggedCells.length;
   remainingDisplay.innerText =
     n_Bombs - flaggedCells.length < 0 ? "0" : n_Bombs - flaggedCells.length;
-    allBombsFlagged();
+  allBombsFlagged();
 }
 
 /**
@@ -242,16 +280,17 @@ function colorCounter(closeCounter) {
   }
 }
 
+/**
+ * Verifica che tutte le celle flaggate siano effettivamente delle bombe, e determina se si è vinto la partita o se si è flaggata qualche cella che non sia una bomba.
+ */
 function allBombsFlagged() {
-  console.log(flaggedBombs, n_Bombs);
-  if(flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
+  if (flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
     alert("hai vinto!");
     board.style.pointerEvents = "none";
+    // TODO: funzione vittoria
     // youWin();
-  } else {
-    if(flaggedCells.length >= n_Bombs) {
-      alert("Hai flaggato qualche casella ancora valida!");
-    }
+  } else if (flaggedCells.length >= n_Bombs) {
+    alert("Hai flaggato qualche casella ancora valida!");
   }
 }
 
@@ -327,7 +366,7 @@ const defineCloseCells = (_id) => {
           });
     }
   });
-  theseAreCloseCells = [...surroundingCells];
+  return surroundingCells;
 };
 
 /**
@@ -357,10 +396,6 @@ const surrender = () => {
     alert("Almeno inizia a giocare prima di arrenderti!");
   }
 };
-
-///////////////////////////////////
-
-//////////////////////////////////
 
 // DEV UTILS
 function logData() {
