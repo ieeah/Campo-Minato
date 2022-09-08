@@ -1,4 +1,4 @@
-// DOM references
+// crea le referenze al DOM per accesso semplificato.
 const board = document.getElementById("boardgame");
 const difficulty = document.getElementById("levelSelect");
 const startButton = document.getElementById("start");
@@ -10,386 +10,403 @@ const modalMessage = document.querySelector(".modal_message");
 const modalConfirm = document.querySelector(".modal_button.confirm");
 const modalDeny = document.querySelector(".modal_button.deny");
 
-// data variablese
+// creo le variabili necessarie per lo svolgimento del gioco
+
 let allCells = [];
-let n_Bombs = 10;
-let bombs = [];
-let DomBombs = [];
-let size = 10;
+// il numero di bombe presenti sul campo
+let n_Bombs = 12;
+// l'elenco degli id delle celle che sono bombe
+let virtualBombs = [];
+// la dimensione del campo
+let boardSize = 10;
+// flag per capire se il gioco è in corso o meno (potrebbe essere utile per il reset del gioco ed il setting di un timer)
 let gameIsOn = false;
+// l'elenco degli id delle celle che sono state flaggate
 let flaggedCells = [];
-let flaggedBombs = 10;
+// l'elenco degli id delle bombe che sono state flaggate
+let flaggedBombs = 0;
+// il numero di bombe che rimangono da scoprire
 let remainingBombs = n_Bombs;
+// le celle vicine alla cella cliccata
 let theseAreCloseCells = [];
+// il numero di bombe tra le celle vicine alla cella cliccata
 let closeCounter = 0;
-let clickedCell = null;
-let openedCells = 0;
-let objectCells = [];
-let safeCells = 0;
+// id e referenza alla cella cliccata
+let clickedCell = { id: null, DOMCell: { x: null, y: null, cell: null } };
+// una rappresentazione fittizia di tutte le celle
+let virtualCells = [];
+// una flag per definire se la partita è stata vinta o meno.
 let victory = null;
 
-startButton.addEventListener("click", () => {
-  startGame();
-});
+let bombs = []; // array di id delle celle che sono bombe
+setTheUI();
 
-surrenderButton.addEventListener("click", () => {
-  surrender();
-});
+startButton.addEventListener("click", () => startGame());
+surrenderButton.addEventListener("click", () => surrender());
 
-// a questo punto si aspetta che l'utente clicchi su una delle celle per richiamare i metodi attaccati con l'eventListener
+logData();
 
-// metodi
-
-function startGame() {
+/**
+ * Funzione che avvia la creazione del campo di gioco e prepara tutti i dati necessari per lo svolgimento del gioco.
+ */
+const startGame = () => {
   resetGame();
-  // setta una flag per il gioco attivo, con cui inviare alert di reset gioco;
-  gameIsOn = true;
-  // se gameIsOn = true; -> messaggio di allerta;
-  // se gameIsOff = fai partire il gioco;
-  // prendi il valore di difficoltà
-  getBoardgameSize();
-  // genera n bombe in base alla difficoltà e inseriscile nell'array "bombe"
-  generateBombs();
-  // in base al valore della difficoltà genera la tabella con n bombe piazzate in modo random
-  generateBoard(size);
-  setCellsData();
-  settingTheUI();
-}
-
-function settingTheUI() {
-  flagsDisplay.innerText = flaggedCells.length;
-  remainingDisplay.innerText = n_Bombs;
-}
-
-function updatingDisplays() {
-  flagsDisplay.innerText = flaggedCells.length;
-  remainingDisplay.innerText = n_Bombs - flaggedCells.length;
-}
-
-function resetGame() {
-  gameIsOn = true;
+  getDifficultyLevel();
+  generateBombsIds();
+  setTheUI();
+  generateBoard();
+};
+/**
+ * Funzione che resetta tutti i dati di gioco e azzera l'interfaccia.
+ */
+const resetGame = () => {
   allCells = [];
-  n_Bombs = 10;
-  bombs = [];
-  DomBombs = [];
-  size = 10;
-  flaggedCells = [];
-  flaggedBombs = 0;
+  n_Bombs = 12;
+  gameIsOn = false;
+  victory = null;
   remainingBombs = n_Bombs;
+  flaggedBombs = 0;
   theseAreCloseCells = [];
   closeCounter = 0;
-  clickedCell = null;
-  openedCells = 0;
-  objectCells = [];
-  safeCells = 0;
-  victory = null;
+  clickedCell = { id: null, DOMCell: { x: null, y: null, cell: null } };
+  virtualCells = [];
+  flaggedCells = [];
+  bombs = [];
+  boardSize = 10;
+  setTheUI();
+  logData();
+};
 
-  // // displays
-  // flagsDisplay.innerText = flaggedCells.length;
-  // remainingDisplay.innerText = n_Bombs;
-}
-
-function getBoardgameSize() {
+/**
+ * Funzione che setta il numero di celle e di bombe in base al livello di difficoltà selezionato dall'utente.
+ */
+const getDifficultyLevel = () => {
   switch (difficulty.value) {
     case "1":
-      size = 10;
-      n_Bombs = 10;
+      boardSize = 10;
+      n_Bombs = 12;
       break;
 
     case "2":
-      size = 10;
-      n_Bombs = 15;
+      boardSize = 10;
+      n_Bombs = 20;
       break;
 
     case "3":
-      size = 17;
+      boardSize = 17;
       n_Bombs = 45;
       break;
 
     case "4":
-      size = 20;
-      n_Bombs = 58;
+      boardSize = 20;
+      n_Bombs = 60;
       break;
   }
-}
+  console.log("difficulty:", { level: difficulty.value, boardSize, n_Bombs });
+};
 
-function generateBombs() {
-  // empty the bombs list
-  bombs = [];
-  for (let i = 0; i < n_Bombs; i++) {
-    let new_bomb = {};
-    let id = Math.floor(Math.random() * Math.pow(size, 2));
-    if (!bombs.includes(id)) {
-      bombs.push(id);
-    } else i--;
+/**
+ * Generazione degli id delle celle che saranno delle bombe.
+ */
+const generateBombsIds = () => {
+  while (bombs.length < n_Bombs) {
+    let randomId = Math.floor(Math.random() * (boardSize * boardSize));
+    if (!bombs.includes(randomId)) {
+      bombs.push(randomId);
+    }
   }
-  console.log("bombs", bombs);
-}
+  console.log(
+    "bombs ids:",
+    bombs.sort((a, b) => a - b)
+  );
+};
 
-function generateBoard(size) {
+/**
+ * Funzione che setta la cella cliccata con i riferimenti alla cella stessa, il suo id e le sue coordinate.
+ */
+const setClickedCell = (id, x, y, cellReference) => {
+  clickedCell = { id: id, DOMCell: { x: x, y: y, cell: cellReference } };
+};
+
+/**
+ * Generazione delle celle del DOM, di ogni cella viene salvata una referenza alla cella stessa in virtualCells.
+ */
+const generateBoard = () => {
+  console.log("nuova tavola");
+  // creo x celle per coprire le dimensioni del campo
   board.innerHTML = "";
   let j = 0;
-  for (let y = 1; y <= size; y++) {
-    for (let x = 1; x <= size; x++) {
+  for (let y = 1; y <= boardSize; y++) {
+    for (let x = 1; x <= boardSize; x++) {
       const cell = document.createElement("div");
 
       cell.classList.add("cell");
-      cell.style.width = `calc(100% / ${size})`;
-      cell.style.height = `calc(100% / ${size})`;
-      cell.dataset.x = x;
-      cell.dataset.y = y;
-      cell.dataset.id = j;
-      // click normale
-      cell.addEventListener("click", (e) => isBomb(e.target));
-      //click tasto dx
-      cell.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        flagCell(e);
+      cell.style.width = `calc(100% / ${boardSize})`;
+      cell.style.height = `calc(100% / ${boardSize})`;
+      cell.id = j;
+
+      const cellId = parseInt(j);
+      // click normale, si setta la cella cliccata e si controlla che sia o meno una bomba
+      cell.addEventListener("click", () => {
+        setClickedCell(cellId, x, y, cell);
+        handleClick(cellId);
       });
 
-      if (bombs.includes(j)) {
-        cell.dataset.mine = true;
+      //click tasto dx, si avvia la funzione per il flaggin della cella clicclata
+      cell.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        flagCell(cellId);
+      });
+
+      if (bombs.includes(cellId)) {
+        virtualBombs.push(cell);
       }
 
+      virtualCells[cellId] = {
+        id: cellId,
+        DOMCell: { x: x, y: y, cellReference: cell },
+        clicked: false,
+      };
+
       board.appendChild(cell);
-      allCells.push(cell);
       j++;
     }
   }
-  safeCells = allCells.length - n_Bombs;
-}
+  board.style.pointerEvents = "all";
+};
 
-function setCellsData() {
-  allCells.forEach((cell, i) => {
-    let o = {};
-    o["id"] = i;
-    o["counter"] = nearBombs(cell);
-    o["closeCells"] = collectSurroundingCells(cell);
-    o["x"] = cell.dataset.x;
-    o["y"] = cell.dataset.y;
-    objectCells.push(o);
-  });
-  console.log("objectCells", objectCells);
-}
+/**
+ * Manda un alert di sconfitta al giocatore, chiama la funzione highlightBombs() e disattiva tutti i click sulla tavola di gioco.
+ */
+const gameOver = () => {
+  highlightBombs();
+  board.style.pointerEvents = "none";
+  alert("Oh no!\nHai perso la partita!\nTranquillo, puoi farne un'altra!");
+};
 
-function isBomb(_clickedCell) {
-  // ottieni l'id della cella cliccata la referenze del DOM
-  clickedCell = _clickedCell;
-  clickId = parseInt(clickedCell.dataset.id);
-  
-  // controlla se la cella è stata flaggata o meno
+/**
+ * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
+ */
+const handleClick = (id, inALoop = false) => {
+  cell = virtualCells[id].DOMCell.cellReference;
+  if (!flaggedCells.includes(id)) {
+    if (isABomb(id)) {
+      gameOver();
+    } else if (!virtualCells[id].clicked) {
+      virtualCells[id].clicked = true;
+      let localCloseCells = defineCloseCells(id);
+      console.log({ localCloseCells });
+      let closeBombsCounter = countCloseBombs();
+      if (closeBombsCounter === 0 && !inALoop) {
+        cell.classList.add("not");
+        checkSurroundingCells(id);
+      } else {
+        cell.innerText = closeBombsCounter;
+        cell.style.color = colorCounter(closeBombsCounter);
+      }
 
-  console.clear();
-  console.log("click sulla bomba");
-
-  if (clickedCell.classList.contains("flagged")) {
-    console.log("cella flaggata, ABORT");
-    return false;
+      cell.classList.add("not");
+      setTheUI();
+    }
   }
+};
 
-  if (bombs.includes(clickId)) {
-    console.log("la cella cliccata è una bomba");
-    console.log("chiamo gameOver");
-    gameOver();
-    return null;
-  } else {
-    console.log("la cella non è una bomba");
-    if (objectCells[clickId].counter === 0) {
-      checkSurroundingCells(clickedCell, clickId);
-    }
-    openedCells++;
-    clickedCell.classList.add("not");
-    clickedCell.innerText = objectCells[clickId].counter;
-    colorCounter(objectCells[clickId].counter);
-  }
-  console.log("isBomb finito, chiamo watchOpenedCells()");
-  watchOpenedCells();
-}
-
-function gameOver() {
-  victory = false;
-  allCells.forEach((cell) => {
-    cell.classList.add("over");
-    if (bombs.includes(parseInt(cell.dataset.id))) {
-      cell.classList.remove("flagged");
-      cell.classList.add("bomb");
-      cell.innerHTML = '<i class="fas fa-bomb"></i>';
-    }
+/**
+ * Verifica se le celle adiacenti hanno contatore zero, in quel caso gli applica la funzione handleClick
+ */
+function checkSurroundingCells(_id) {
+  theseAreCloseCells.forEach((cell) => {
+    console.log("checking", cell);
+    handleClick(cell.id);
   });
 }
 
-function collectSurroundingCells(currentCell) {
-  let surroundingCells = [];
-  let x = parseInt(currentCell.dataset.x);
-  let y = parseInt(currentCell.dataset.y);
-
-  allCells.forEach((e) => {
-    if (
-      between(x, x-1, x+1) &&
-      between(y, y-1, y+1)
-    ) {
-      e === currentCell ? null : surroundingCells.push(e);
-    }
-  });
-  return surroundingCells;
+/**
+ * Stampa a schermo il contatore delle celle flaggate e delle bombe rimanenti.
+ * Chiama allBombsFlagged().
+ */
+function setTheUI() {
+  flagsDisplay.innerText = flaggedCells.length;
+  remainingDisplay.innerText =
+    n_Bombs - flaggedCells.length < 0 ? "0" : n_Bombs - flaggedCells.length;
+  allBombsFlagged();
 }
 
-function checkSurroundingCells(_clickedCell, _cellId) {
-  let surroundingCells = collectSurroundingCells(_clickedCell);
-  console.log({ surroundingCells });
-  surroundingCells.forEach((cell) => {
-    const CELLID = parseInt(cell.dataset.id);
-    const CLOSEBOMBS = objectCells[CELLID].counter;
-    if (!CLOSEBOMBS) {
-      openedCells++;
-      clickedCell.classList.add("not");
-      clickedCell.innerText = objectCells[CELLID].counter;
-      colorCounter(objectCells[CELLID].counter);
-    }
-    let isABomb = bombs.includes(CELLID) ? "not a bomb" : "it's a bomb";
-    console.log({ CELLID, CLOSEBOMBS, isABomb });
-  });
-}
-
-// function testSurroundingCellsNoRecursion(_clickedCell) {
-//   collectSurroundingCells(_clickedCell).forEach(cell => {
-//     let currentCellId = parseInt(cell.dataset.id);
-//     if(bombs.includes(currentCellId)) {
-//       gameOver();
-//       return null;
-//     } else {
-//       console.log("la cella non è una bomba");
-//       openedCells++;
-//       clickedCell.innerText = objectCells[clickId].counter;
-//       colorCounter(objectCells[clickId].counter);
-//     }
-//   });
-// }
-
-function nearBombs(clickedCell) {
-  let surroundingCells = collectSurroundingCells(clickedCell);
-  closeCounter = 0;
-
-  surroundingCells.forEach((e) => {
-    if (e.dataset.mine == "true") {
-      closeCounter++;
-    }
-    // TODO Eliminare dataset mine e trovare un altro modo per fare il conteggio delle bombe vicine alle caselle cliccate
-  });
-  return closeCounter;
-}
-
+/**
+ * Colora il testo della cella in base al numero di bombe tra le celle vicine
+ */
 function colorCounter(closeCounter) {
   switch (closeCounter) {
     case 0:
-      clickedCell.style.color = "#07fc03";
+      return "#07fc03";
       break;
     case 1:
-      clickedCell.style.color = "#00ffb7";
+      return "#00ffb7";
       break;
     case 2:
-      clickedCell.style.color = "#f743eb";
+      return "#f743eb";
       break;
     case 3:
-      clickedCell.style.color = "#ff3838";
+      return "#ff3838";
       break;
     case 4:
-      clickedCell.style.color = "#ff8438";
+      return "#ff8438";
       break;
     case 5:
-      clickedCell.style.color = "#0011ff";
+      return "#0011ff";
       break;
     case 6:
-      clickedCell.style.color = "#5b00a1";
+      return "#5b00a1";
       break;
     case 7:
-      clickedCell.style.color = "#002736";
+      return "#002736";
       break;
     case 8:
-      clickedCell.style.color = "#592700";
+      return "#592700";
       break;
   }
 }
 
-function flagCell(e) {
-  let cell = e.target;
-  let id = e.target.dataset.id;
-  let isBomb = bombs.includes(id);
-  if (!flaggedCells.includes(id)) {
-    flaggedCells.push(id);
-    cell.classList.add("flagged");
-    if (isBomb) {
-      flaggedBombs++;
+/**
+ * Verifica che tutte le celle flaggate siano effettivamente delle bombe, e determina se si è vinto la partita o se si è flaggata qualche cella che non sia una bomba.
+ */
+function allBombsFlagged() {
+  if (flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
+    alert("hai vinto!");
+    board.style.pointerEvents = "none";
+    // TODO: funzione vittoria
+    // youWin();
+  } else if (flaggedCells.length >= n_Bombs) {
+    alert("Hai flaggato qualche casella ancora valida!");
+  }
+}
+
+/**
+ * Controlla se la cella cliccata sia una bomba o meno.
+ */
+const isABomb = (id) => {
+  return bombs.includes(id) ? true : false;
+};
+
+/**
+ * Evidenzia tutte le celle che sono delle bombe.
+ */
+const highlightBombs = () => {
+  virtualBombs.forEach((bomb) => {
+    bomb.classList.remove("flagged");
+    bomb.classList.add("bomb");
+    bomb.innerHTML = '<i class="fas fa-bomb"></i>';
+  });
+};
+
+/**
+ * Permette di flaggare e bloccare le celle che si ritiene essere bombe
+ */
+const flagCell = (id) => {
+  cell = virtualCells[id].DOMCell.cellReference;
+  if (!cell.classList.contains("not")) {
+    if (!flaggedCells.includes(id)) {
+      cell.classList.toggle("flagged");
+      flaggedCells.push(id);
+      if (bombs.includes(id)) {
+        flaggedBombs++;
+      }
+    } else {
+      flaggedCells.splice(flaggedCells.indexOf(id), 1);
+      cell.classList.toggle("flagged");
+      if (bombs.includes(id)) {
+        flaggedBombs--;
+      }
     }
-  } else {
-    removeFromFlaggedCells(id, cell);
   }
-  if (flaggedBombs === n_Bombs) {
-    youWin();
-  }
-  updatingDisplays();
-}
 
-function removeFromFlaggedCells(id, tile) {
-  let j = flaggedCells.indexOf(id);
-  flaggedCells.splice(j, 1);
-  tile.classList.remove("flagged");
-  if (bombs.includes(id)) {
-    flaggedBombs--;
-  }
-}
+  setTheUI();
+};
 
-function between(num, min, max) {
-  if (min <= num && max >= num) {
+/**
+ * Controlla quante siano le bombe tra le 8 celle adiacenti a clickedCell
+ */
+const countCloseBombs = () => {
+  let counter = 0;
+  theseAreCloseCells.forEach((cell) => {
+    if (bombs.includes(cell.id)) {
+      counter++;
+    }
+  });
+  return counter;
+};
+
+/**
+ * Definisce quali siano le celle adiacenti a clickedCell e le raccoglie in theseAreCloseCells.
+ */
+const defineCloseCells = (_id) => {
+  let surroundingCells = [];
+  let x = virtualCells[_id].DOMCell.x;
+  let y = virtualCells[_id].DOMCell.y;
+
+  virtualCells.forEach((cell, index) => {
+    if (between(x, cell.DOMCell.x) && between(y, cell.DOMCell.y)) {
+      index === _id
+        ? null
+        : surroundingCells.push({
+            id: index,
+            x: cell.DOMCell.x,
+            y: cell.DOMCell.y,
+            cell: cell.DOMCell.cellReference,
+          });
+    }
+  });
+  theseAreCloseCells = surroundingCells;
+  return surroundingCells;
+};
+
+/**
+ * Controlla se le coordinate della cella in esame sia compresa in un determinato range.
+ */
+function between(ref, toCompare) {
+  if (toCompare >= ref - 1 && toCompare <= ref + 1) {
     return true;
   } else return false;
 }
 
-function youWin() {
-  victory = true;
-  showModal();
-}
-
-function watchOpenedCells() {
-  if (openedCells == safeCells) {
-    youWin();
+/**
+ * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
+ */
+const surrender = () => {
+  console.log({ gameIsOn });
+  if (gameIsOn) {
+    victory = "surrender";
+    let sure = confirm("Sicuro di volerti arrendere?");
+    if (sure) {
+      gameIsOn = false;
+      gameOver();
+    } else {
+      alert("Ottima scelta!\nIn bocca al lupo!");
+    }
+  } else {
+    alert("Almeno inizia a giocare prima di arrenderti!");
   }
+};
+
+// DEV UTILS
+function logData() {
+  console.log("logData:", {
+    allCells,
+    n_Bombs,
+    gameIsOn,
+    victory,
+    remainingBombs,
+    flaggedBombs,
+    theseAreCloseCells,
+    closeCounter,
+    clickedCell,
+    virtualCells,
+    flaggedCells,
+    bombs,
+    boardSize,
+  });
 }
 
-function surrender() {
-  victory = "surrender";
-  let surrender = confirm("confermi di voler abbandonare il gioco?");
-
-  if (surrender) {
-    board.innerHTML = "<h1>Reset in corso</h1>";
-    setTimeout(() => {
-      board.innerHTML = "<h1>Manca poco</h1>";
-    }, 1500);
-    setTimeout(() => {
-      board.innerHTML = "<h1>Puoi iniziare una nuova partita!</h1>";
-    }, 2900);
-    setTimeout(() => {
-      resetGame();
-    }, 3000);
-  }
+function highlightClickedCell(id) {
+  virtualCells[id].DOMCell.cellReference.style.backgroundColor = "yellow";
 }
-
-function showModal() {
-  setModalMessage();
-  modal.classList.remove("hidden");
-}
-
-function setModalMessage() {
-  if (victory) {
-    modalMessage.innerText =
-      "Yeeeeeeeah! YOU WIN! \n Would you like to have a rematch!?";
-  } else if (!victory) {
-    modalMessage.innerText =
-      "Oh what a Pity! \n Should we have another match!?";
-  } else if (victory === "surrender") {
-    modalMessage.innerText = "Oh... ok... \n Are you sure!?";
-  }
-}
-
-// TODO - finire animazione modale e conferma (la modale appare con il messaggio corretto, ma devo fare in modo che quando clicco sui bottoni facciamo varie azioni)
-// TODO - migliorare animazioni bottoni
