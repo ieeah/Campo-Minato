@@ -98,7 +98,8 @@ main .options {
   flex-direction: column;
   width: 20%;
 }
-main .options .options-head {
+main .options .options_head {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin-bottom: 1.6rem;
@@ -106,8 +107,15 @@ main .options .options-head {
   font-family: "Inria Sans", sans-serif;
   color: #34c16a;
 }
-main .options .options-head.bad {
+main .options .options_head.bad {
   color: #ec2251;
+}
+main .options .options_head #icon {
+  width: 20%;
+  aspect-ratio: 1;
+  background-image: url("./imgs/icons/moves_reactions/ok_cool.svg");
+  background-size: contain;
+  background-position: center;
 }
 main .options .options_wrap {
   margin-bottom: 1.6rem;
@@ -121,7 +129,7 @@ main .options .options_wrap label {
 }
 main .options .options_wrap select {
   width: 100%;
-  background-color: rgba(0, 148, 209, 0.7);
+  background-color: rgba(0, 148, 209, 0.55);
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -130,7 +138,7 @@ main .options .options_wrap select {
 }
 main .options button {
   padding: 0.8rem 1rem;
-  background: rgba(0, 148, 209, 0.7);
+  background: rgba(0, 148, 209, 0.55);
   color: white;
   font-size: 1.2rem;
   text-transform: capitalize;
@@ -141,7 +149,7 @@ main .options button {
   transition: all 0.2s ease-out;
 }
 main .options button:hover {
-  background-color: #0094d1;
+  background-color: rgba(0, 148, 209, 0.8);
 }
 
 header {

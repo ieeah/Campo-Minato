@@ -110,7 +110,8 @@ main {
     display: flex;
     flex-direction: column;
     width: 20%;
-    .options-head {
+    .options_head {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       margin-bottom: $fz-16;
@@ -119,6 +120,16 @@ main {
       color: $accent;
       &.bad {
         color: $color-deny;
+      }
+      .text {
+
+      }
+      #icon {
+        width: 20%;
+        aspect-ratio: 1;
+        background-image: url('./imgs/icons/moves_reactions/ok_cool.svg');
+        background-size: contain;
+        background-position: center;
       }
     }
     .options_wrap {
@@ -156,7 +167,7 @@ main {
       transition: all .2s ease-out;
 
       &:hover {
-        background-color: rgba($color: $color-primary, $alpha: 1);
+        background-color: rgba($color: $color-primary, $alpha: .8);
       }
     }
   }

@@ -1,3 +1,5 @@
+import translations from "./js/translations";
+
 // crea le referenze al DOM per accesso semplificato.
 const board = document.getElementById("boardgame");
 const difficulty = document.getElementById("levelSelect");
@@ -9,14 +11,21 @@ const modal = document.querySelector(".modal");
 const modalMessage = document.querySelector(".modal_message");
 const modalConfirm = document.querySelector(".modal_button.confirm");
 const modalDeny = document.querySelector(".modal_button.deny");
-const icons = [[
-  "bad_cry", "bad_emb"
-],[
-  "ok_cool", "ok_hearts", "ok_perv"
-],
-[
-  "end_cross"
-]];
+const header_text = document.getElementById("options_head_text");
+const header_icon = document.getElementById("icon");
+const icons = {
+  reactions: [
+    ["bad_cry", "bad_emb"],
+    ["ok_cool", "ok_hearts", "ok_perv"],
+    ["end_cross"],
+  ],
+  actions: ["action_play", "action_surrender"],
+  cells: ["bomb", "flag"],
+};
+
+header_text.innerText = "#fff";
+
+// header_icon.style.backgroundImage = "url(./imgs/icons/moves_reactions/end_cross.svg)";
 
 // creo le variabili necessarie per lo svolgimento del gioco
 
