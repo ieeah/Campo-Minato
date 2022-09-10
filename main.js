@@ -44,8 +44,6 @@ setTheUI();
 startButton.addEventListener("click", () => startGame());
 surrenderButton.addEventListener("click", () => surrender());
 
-logData();
-
 /**
  * Funzione che avvia la creazione del campo di gioco e prepara tutti i dati necessari per lo svolgimento del gioco.
  */
@@ -74,7 +72,6 @@ const resetGame = () => {
   bombs = [];
   boardSize = 10;
   setTheUI();
-  logData();
 };
 
 /**
@@ -88,21 +85,20 @@ const getDifficultyLevel = () => {
       break;
 
     case "2":
-      boardSize = 10;
-      n_Bombs = 20;
+      boardSize = 13;
+      n_Bombs = 30;
       break;
 
     case "3":
-      boardSize = 17;
+      boardSize = 18;
       n_Bombs = 45;
       break;
 
     case "4":
-      boardSize = 20;
-      n_Bombs = 60;
+      boardSize = 30;
+      n_Bombs = 85;
       break;
   }
-  console.log("difficulty:", { level: difficulty.value, boardSize, n_Bombs });
 };
 
 /**
@@ -115,10 +111,6 @@ const generateBombsIds = () => {
       bombs.push(randomId);
     }
   }
-  console.log(
-    "bombs ids:",
-    bombs.sort((a, b) => a - b)
-  );
 };
 
 /**
@@ -132,7 +124,6 @@ const setClickedCell = (id, x, y, cellReference) => {
  * Generazione delle celle del DOM, di ogni cella viene salvata una referenza alla cella stessa in virtualCells.
  */
 const generateBoard = () => {
-  console.log("nuova tavola");
   // creo x celle per coprire le dimensioni del campo
   board.innerHTML = "";
   let j = 0;
@@ -195,7 +186,6 @@ const handleClick = (id, inALoop = false) => {
     } else if (!virtualCells[id].clicked) {
       virtualCells[id].clicked = true;
       let localCloseCells = defineCloseCells(id);
-      console.log({ localCloseCells });
       let closeBombsCounter = countCloseBombs();
       if (closeBombsCounter === 0 && !inALoop) {
         cell.classList.add("not");
@@ -216,7 +206,6 @@ const handleClick = (id, inALoop = false) => {
  */
 function checkSurroundingCells(_id) {
   theseAreCloseCells.forEach((cell) => {
-    console.log("checking", cell);
     handleClick(cell.id);
   });
 }
@@ -373,9 +362,8 @@ function between(ref, toCompare) {
  * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
  */
 const surrender = () => {
-  console.log({ gameIsOn });
-  if (gameIsOn) {
-    victory = "surrender";
+  // if (gameIsOn) {
+  //   victory = "surrender";
     let sure = confirm("Sicuro di volerti arrendere?");
     if (sure) {
       gameIsOn = false;
@@ -383,30 +371,7 @@ const surrender = () => {
     } else {
       alert("Ottima scelta!\nIn bocca al lupo!");
     }
-  } else {
-    alert("Almeno inizia a giocare prima di arrenderti!");
-  }
+  // } else {
+  //   alert("Almeno inizia a giocare prima di arrenderti!");
+  // }
 };
-
-// DEV UTILS
-function logData() {
-  console.log("logData:", {
-    allCells,
-    n_Bombs,
-    gameIsOn,
-    victory,
-    remainingBombs,
-    flaggedBombs,
-    theseAreCloseCells,
-    closeCounter,
-    clickedCell,
-    virtualCells,
-    flaggedCells,
-    bombs,
-    boardSize,
-  });
-}
-
-function highlightClickedCell(id) {
-  virtualCells[id].DOMCell.cellReference.style.backgroundColor = "yellow";
-}
