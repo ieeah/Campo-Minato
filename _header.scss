@@ -1,15 +1,16 @@
 @import './vars';
 
 header {
-  display: flex;
-  padding: 2rem 3rem;
-  align-items: center;
-  justify-content: space-between;
+  width: 80%;
+  margin-inline: auto;
 
   h1 {
-    font-size: 3.5rem;
-    transform: rotate(-2deg);
-    text-shadow: 2px 5px $shadow;
+    text-align: right;
+    line-height: 10vh;
+    height: 10vh;
+    font-size: 2.5rem;
+    color: $accent;
+    font-family: $font-primary;
   }
 }
 
@@ -19,6 +20,8 @@ header {
   width: 35%;
   justify-content: end;
   padding-right: 2rem;
+  display: none;
+  pointer-events: none;
 }
 
 .display_wrap {

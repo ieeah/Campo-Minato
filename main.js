@@ -9,6 +9,14 @@ const modal = document.querySelector(".modal");
 const modalMessage = document.querySelector(".modal_message");
 const modalConfirm = document.querySelector(".modal_button.confirm");
 const modalDeny = document.querySelector(".modal_button.deny");
+const icons = [[
+  "bad_cry", "bad_emb"
+],[
+  "ok_cool", "ok_hearts", "ok_perv"
+],
+[
+  "end_cross"
+]];
 
 // creo le variabili necessarie per lo svolgimento del gioco
 

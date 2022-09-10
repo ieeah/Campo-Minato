@@ -13,11 +13,11 @@
 body {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  font-family: 'Nanum Gothic', sans-serif;
+  // height: 100vh;
+  font-family: $font-secondary;
   background-color: $bg-color;
-  color: $bomb;
-  background-image: url('./imgs/wave-haikei.svg');
+  color: $clear;
+  background-image: url('./imgs/BG.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
@@ -101,20 +101,26 @@ body {
 }
 
 main {
-  flex-grow: 1;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  width: 80%;
+  margin-inline: auto;
 
   .options {
-    position: absolute;
-    right: 2rem;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 20vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-
+    width: 20%;
+    .options-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $fz-16;
+      font-size: 2.2rem;
+      font-family: $font-primary;
+      color: $accent;
+      &.bad {
+        color: $color-deny;
+      }
+    }
     .options_wrap {
       margin-bottom: $fz-16;
 
@@ -128,52 +134,29 @@ main {
 
       select {
         width: 100%;
-        background-color: $bomb;
+        background-color: $option-bg-color;
         color: $clear;
         padding: .5rem 1rem;
         border: none;
-        border-radius: 5px;
+        border-radius: $px5;
         font-size: $fz-12;
       }
     }
 
     button {
       padding: .8rem 1rem;
-      background: rgb(239, 71, 111);
-      background: linear-gradient(63deg, rgba(239, 71, 111, 1) 11%, rgba(239, 71, 111, 0.2889356426164216) 77%);
+      background: $option-bg-color;
       color: $clear;
       font-size: $fz-12;
       text-transform: capitalize;
-      border-radius: 80px;
+      border-radius: $px5;
       border: none;
       cursor: pointer;
       margin-bottom: $fz-12;
       transition: all .2s ease-out;
-      position: relative;
 
       &:hover {
-        color: $bomb;
-        background: rgb(77, 25, 77);
-        background: linear-gradient(63deg, rgba(77, 25, 77, 0.31414572665003504) 25%, rgba(77, 25, 77, 1) 77%);
-
-        &:before {
-          width: 100%;
-        }
-      }
-
-      &:before {
-        content: '';
-        border-radius: 80px;
-        width: 0%;
-        height: 100%;
-        position: absolute;
-        right: 0;
-        top: 0;
-        opacity: .2;
-        background-color: black;
-        transition: all 1.2s ease;
-        box-shadow: -4px 0px 4px rgba($clear, .2);
-        background-blend-mode: color-dodge;
+        background-color: rgba($color: $color-primary, $alpha: 1);
       }
     }
   }
@@ -184,11 +167,12 @@ main {
 // boardgame
 
 #boardgame {
+  height: 85vh;
+  // background-color: rgba($black, .2);
   display: flex;
   flex-wrap: wrap;
   aspect-ratio: 1 / 1;
-  height: 750px;
-  border: 3px solid $bomb;
+  border: 1px solid $color-secondary;
 }
 
 #boardgame.over {
@@ -205,8 +189,8 @@ main {
 // cells
 
 .cell {
-  background-color: $shadow;
-  border: 1px solid $bomb;
+  background-color: rgba($color: $color-primary, $alpha: .3);
+  border: 1px solid $color-secondary;
   display: grid;
   place-content: center;
   cursor: pointer;
@@ -230,7 +214,7 @@ main {
 }
 
 .cell.not {
-  background-color: $flag-color;
+  background-color: $bg-color-secondary;
   cursor: default;
 }
 
@@ -239,7 +223,7 @@ main {
 }
 
 .cell.flagged {
-  background-color: $bomb;
+  background-color: rgba($color: $accent, $alpha: .7);
   font-size: 2.6rem;
   background-image: url('./imgs/flag-solid.svg');
   background-size: 50%;
@@ -253,7 +237,7 @@ main {
 
 footer {
   text-align: center;
-  height: 80px;
+  height: 5vh;
   line-height: 80px;
 
   a {
