@@ -6,10 +6,9 @@ header {
   display: flex;
   justify-content: end;
   align-items: center;
+  padding-block: .5rem;
   h1 {
     text-align: right;
-    line-height: 10vh;
-    height: 10vh;
     font-size: 2.5rem;
     color: $accent;
     font-family: $font-primary;

@@ -130,7 +130,7 @@ main .menu .options_wrap .optionGroup .singleOption.long {
   width: 65%;
   padding-left: 1rem;
 }
-main .menu .options_wrap .optionGroup .singleOption.select {
+main .menu .options_wrap .optionGroup .singleOption.full {
   width: 100%;
 }
 main .menu .options_wrap .optionGroup .singleOption label {
@@ -191,11 +191,10 @@ header {
   display: flex;
   justify-content: end;
   align-items: center;
+  padding-block: 0.5rem;
 }
 header h1 {
   text-align: right;
-  line-height: 10vh;
-  height: 10vh;
   font-size: 2.5rem;
   color: #34c16a;
   font-family: "Inria Sans", sans-serif;
@@ -207,10 +206,10 @@ header img {
 
 #boardgame {
   height: 85vh;
+  width: 75%;
   display: flex;
   flex-wrap: wrap;
-  aspect-ratio: 1/1;
-  border: 1px solid #9bd9e8;
+  overflow-x: auto;
 }
 
 #boardgame.over {
@@ -230,8 +229,7 @@ header img {
   display: grid;
   place-content: center;
   cursor: pointer;
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .cell.over {
@@ -247,6 +245,10 @@ header img {
   color: #1b3a4b;
   pointer-events: none;
   font-size: 2rem;
+  background-image: url("./imgs/icons/cells_icons/bomb.svg");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .cell.not {
@@ -261,7 +263,7 @@ header img {
 .cell.flagged {
   background-color: rgba(52, 193, 106, 0.7);
   font-size: 2.6rem;
-  background-image: url("./imgs/flag-solid.svg");
+  background-image: url("./imgs/icons/cells_icons/flag.svg");
   background-size: 50%;
   background-position: center center;
   background-repeat: no-repeat;

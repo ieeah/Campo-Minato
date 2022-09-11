@@ -375,7 +375,6 @@ const highlightBombs = () => {
   virtualBombs.forEach((bomb) => {
     bomb.classList.remove("flagged");
     bomb.classList.add("bomb");
-    bomb.innerHTML = '<i class="fas fa-bomb"></i>';
   });
 };
 
