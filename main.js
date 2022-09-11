@@ -13,6 +13,7 @@ const modalConfirm = document.querySelector(".modal_button.confirm");
 const modalDeny = document.querySelector(".modal_button.deny");
 const header_text = document.getElementById("reactions_text");
 const header_icon = document.getElementById("reactions_icon");
+const clickedCellsDisplay = document.getElementById("clickedCellsDisplay");
 const icons = {
   reactions: [
     ["bad_cry", "bad_emb", "end_cross"],
@@ -22,8 +23,24 @@ const icons = {
   cells: ["bomb", "flag"],
 };
 const reaction_texts = {
-  bad: ["Oh No!", "Peccato!", "Nope!", "Game Over!", "KO tecnico!", "Non Va!", "Looooser!"],
-  good: ["Grande!", "Vai così!", "Boom Baby!", "Fenomeno!", "Che numero!", "Che gioco!", "Sei Forte!"],
+  bad: [
+    "Oh No!",
+    "Peccato!",
+    "Nope!",
+    "Game Over!",
+    "KO tecnico!",
+    "Non Va!",
+    "Looooser!",
+  ],
+  good: [
+    "Grande!",
+    "Vai così!",
+    "Boom Baby!",
+    "Fenomeno!",
+    "Che numero!",
+    "Che gioco!",
+    "Sei Forte!",
+  ],
 };
 
 // creo le variabili necessarie per lo svolgimento del gioco
@@ -36,7 +53,6 @@ let virtualBombs = [];
 // la dimensione del campo
 let boardSize = 10;
 // flag per capire se il gioco è in corso o meno (potrebbe essere utile per il reset del gioco ed il setting di un timer)
-let gameIsOn = false;
 // l'elenco degli id delle celle che sono state flaggate
 let flaggedCells = [];
 // l'elenco degli id delle bombe che sono state flaggate
@@ -55,10 +71,23 @@ let virtualCells = [];
 let victory = null;
 
 let bombs = []; // array di id delle celle che sono bombe
+
+let clickedCells = 0;
+
+let gameTimer = null;
+let seconds = 0;
 setTheUI();
 
-startButton.addEventListener("click", () => startGame());
-surrenderButton.addEventListener("click", () => surrender());
+startButton.addEventListener("click", () => {
+  startGame();
+  gameTimer = setInterval(() => {
+    seconds++;
+    setTheUI();
+  }, 1000);
+});
+surrenderButton.addEventListener("click", () => {
+  surrender();
+});
 
 /**
  * Funzione che avvia la creazione del campo di gioco e prepara tutti i dati necessari per lo svolgimento del gioco.
@@ -76,7 +105,6 @@ const startGame = () => {
 const resetGame = () => {
   allCells = [];
   n_Bombs = 12;
-  gameIsOn = false;
   victory = null;
   remainingBombs = n_Bombs;
   flaggedBombs = 0;
@@ -89,6 +117,12 @@ const resetGame = () => {
   boardSize = 10;
   header_text.innerText = "Weee Giochiamoo?";
   header_icon.src = "./imgs/icons/new_game.svg";
+  clickedCells = 0;
+  seconds = 0;
+  if(gameTimer) {
+    clearInterval(gameTimer);
+    gameTimer = null;
+  }
   setTheUI();
 };
 
@@ -113,9 +147,13 @@ const getDifficultyLevel = () => {
       break;
 
     case "4":
-      boardSize = 30;
+      boardSize = 28;
       n_Bombs = 85;
       break;
+
+    case "5":
+      boardSize = 30;
+      n_Bombs = 110;
   }
 };
 
@@ -205,6 +243,7 @@ const handleClick = (id, inALoop = false) => {
       handleReaction("bad");
       gameOver();
     } else if (!virtualCells[id].clicked) {
+      clickedCells++;
       virtualCells[id].clicked = true;
       handleReaction("good");
       let localCloseCells = defineCloseCells(id);
@@ -235,7 +274,7 @@ function handleReaction(type) {
       reaction = icons.reactions[0][index];
       header_text.innerText = reaction_texts.bad[textIndex];
       header_icon.src = `./imgs/icons/moves_reactions/${reaction}.svg`;
-      if(!isBad) {
+      if (!isBad) {
         header_text.classList.add("bad");
       }
       break;
@@ -245,7 +284,7 @@ function handleReaction(type) {
       reaction = icons.reactions[1][index];
       header_text.innerText = reaction_texts.good[textIndex];
       header_icon.src = `./imgs/icons/moves_reactions/${reaction}.svg`;
-      if(isBad) {
+      if (isBad) {
         header_text.classList.remove("bad");
       }
       break;
@@ -269,6 +308,8 @@ function setTheUI() {
   remainingDisplay.innerText =
     n_Bombs - flaggedCells.length < 0 ? "0" : n_Bombs - flaggedCells.length;
   allBombsFlagged();
+  clickedCellsDisplay.innerText = clickedCells;
+  timerDisplay.innerText = seconds;
 }
 
 /**
@@ -412,16 +453,10 @@ function between(ref, toCompare) {
  * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
  */
 const surrender = () => {
-  // if (gameIsOn) {
-  //   victory = "surrender";
-    let sure = confirm("Sicuro di volerti arrendere?");
-    if (sure) {
-      gameIsOn = false;
-      gameOver();
-    } else {
-      alert("Ottima scelta!\nIn bocca al lupo!");
-    }
-  // } else {
-  //   alert("Almeno inizia a giocare prima di arrenderti!");
-  // }
+  let sure = confirm("Sicuro di volerti arrendere?");
+  if (sure) {
+    gameOver();
+  } else {
+    alert("Ottima scelta!\nIn bocca al lupo!");
+  }
 };

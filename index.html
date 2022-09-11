@@ -22,40 +22,47 @@
   <body>
     <header>
       <h1>Mine Sweeper</h1>
-      <div class="displays">
-        <div class="display_wrap">
-          <div id="flagsDisplay" class="display_container">
-            Flagged Cells:
-            <span id="flaggedCells"></span>
-          </div>
-        </div>
-
-        <div class="display_wrap">
-          <div id="bombsDisplay" class="display_container">
-            Bombs:
-            <span id="unexploded"></span>
-          </div>
-        </div>
-      </div>
+      <img src="./imgs/icons/cells_icons/bomb.svg" alt="" />
     </header>
     <main>
       <div class="options">
         <div class="reactions">
           <div id="reactions_text">Weee Giochiamoo?</div>
-          <img
-            id="reactions_icon"
-            src="./imgs/icons/new_game.svg"
-            alt=""
-          />
+          <img id="reactions_icon" src="./imgs/icons/new_game.svg" alt="" />
         </div>
         <div class="options_wrap">
-          <label for="levelSelect">Choose difficulty</label>
-          <select name="levelSelect" id="levelSelect">
-            <option value="1" name="">Beginner</option>
-            <option value="2" name="">Easy</option>
-            <option value="3" name="">Medium</option>
-            <option value="4" name="">Hard</option>
-          </select>
+          <div class="optionGroup">
+            <div class="singleOption">
+              <label for="levelSelect">Difficoltà</label>
+              <select name="levelSelect" id="levelSelect">
+                <option value="1" name="">Principiante</option>
+                <option value="2" name="">Facile</option>
+                <option value="3" name="">Medio</option>
+                <option value="4" name="">Difficile</option>
+                <option value="5" name="">Pazzo</option>
+              </select>
+            </div>
+          </div>
+          <div class="optionGroup">
+            <div class="singleOption">
+              <label>Flags</label>
+              <div id="flaggedCells" class="display_container"></div>
+            </div>
+            <div class="singleOption">
+              <label>Bombe rimanenti</label>
+              <div id="unexploded" class="display_container"></div>
+            </div>
+          </div>
+          <div class="optionGroup">
+            <div class="singleOption">
+              <label for="">Timer</label>
+              <div id="timerDisplay" class="display_container">0</div>
+            </div>
+            <div class="singleOption">
+              <label for="">Celle Scoperte</label>
+              <div id="clickedCellsDisplay" class="display_container">0</div>
+            </div>
+          </div>
         </div>
         <button id="start">start game</button>
         <button id="surrender">surrender</button>

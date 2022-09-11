@@ -3,7 +3,9 @@
 header {
   width: 80%;
   margin-inline: auto;
-
+  display: flex;
+  justify-content: end;
+  align-items: center;
   h1 {
     text-align: right;
     line-height: 10vh;
@@ -12,46 +14,35 @@ header {
     color: $accent;
     font-family: $font-primary;
   }
+  img {
+    height: 100%;
+    margin-left: 1.5rem;
+  }
 }
 
-.displays {
+.optionGroup {
   display: flex;
   align-items: center;
-  width: 35%;
-  justify-content: end;
-  padding-right: 2rem;
-  display: none;
-  pointer-events: none;
-}
+  justify-content: space-between;
 
-.display_wrap {
-  padding: 5px;
-  background: rgb(11, 82, 91);
-  background: linear-gradient(128deg, rgba(11, 82, 91, 1) 11%, rgba(239, 71, 111, 1) 90%);
-  border-radius: 25px;
-  opacity: .7;
-  margin-left: 2rem;
+  .singleOption {
+    margin-bottom: .5rem;
+    label {
+      margin-bottom: 1rem;
+    }
+  }
 }
 
 .display_container {
-  background-color: $flag-color;
-  border-radius: 20px;
-  padding: 1.5rem;
-  font-weight: bold;
-  color: white;
-  z-index: 2;
-  position: relative;
+  background-color: $option-bg-color;
+  border-radius: $px5;
+  // width: 45%;
+  padding: 0.8rem 1rem;
+  // padding: 1.5rem;
+  // font-weight: bold;
+  // color: white;
+  // z-index: 2;
+  // position: relative;
   display: flex;
   align-items: center;
-
-  span {
-
-    margin-left: 1.5rem;
-    background: rgba(black, .3);
-    aspect-ratio: 1 / 1;
-    width: 40px;
-    display: grid;
-    place-content: center;
-    border-radius: 8px;
-  }
 }
