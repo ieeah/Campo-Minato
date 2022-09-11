@@ -19,30 +19,3 @@ header {
     margin-left: 1.5rem;
   }
 }
-
-.optionGroup {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .singleOption {
-    margin-bottom: .5rem;
-    label {
-      margin-bottom: 1rem;
-    }
-  }
-}
-
-.display_container {
-  background-color: $option-bg-color;
-  border-radius: $px5;
-  // width: 45%;
-  padding: 0.8rem 1rem;
-  // padding: 1.5rem;
-  // font-weight: bold;
-  // color: white;
-  // z-index: 2;
-  // position: relative;
-  display: flex;
-  align-items: center;
-}

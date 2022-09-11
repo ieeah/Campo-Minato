@@ -93,12 +93,12 @@ main {
   width: 80%;
   margin-inline: auto;
 }
-main .options {
+main .menu {
   display: flex;
   flex-direction: column;
   width: 20%;
 }
-main .options .reactions {
+main .menu .reactions {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -107,27 +107,43 @@ main .options .reactions {
   font-family: "Inria Sans", sans-serif;
   color: #34c16a;
 }
-main .options .reactions #reactions_text.bad {
+main .menu .reactions #reactions_text.bad {
   color: #ec2251;
 }
-main .options .reactions #icon {
+main .menu .reactions #icon {
   width: 20%;
   aspect-ratio: 1;
 }
-main .options .reactions #icon #move_react {
+main .menu .reactions #icon #move_react {
   width: 100%;
 }
-main .options .options_wrap {
-  margin-bottom: 1.6rem;
+main .menu .options_wrap .optionGroup {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
 }
-main .options .options_wrap label {
-  display: block;
-  margin-bottom: 0.2rem;
-  color: white;
-  font-weight: bold;
-  font-size: 1.4rem;
+main .menu .options_wrap .optionGroup .singleOption {
+  margin-bottom: 1.5rem;
+  width: 35%;
 }
-main .options .options_wrap select {
+main .menu .options_wrap .optionGroup .singleOption.long {
+  width: 65%;
+  padding-left: 1rem;
+}
+main .menu .options_wrap .optionGroup .singleOption.select {
+  width: 100%;
+}
+main .menu .options_wrap .optionGroup .singleOption label {
+  margin-bottom: 1rem;
+}
+main .menu .options_wrap .optionGroup .singleOption .display_container {
+  background-color: rgba(0, 148, 209, 0.55);
+  border-radius: 5px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+}
+main .menu .options_wrap .optionGroup select {
   width: 100%;
   background-color: rgba(0, 148, 209, 0.55);
   color: white;
@@ -136,9 +152,11 @@ main .options .options_wrap select {
   border-radius: 5px;
   font-size: 1.2rem;
 }
-main .options button {
-  padding: 0.8rem 1rem;
-  background: rgba(0, 148, 209, 0.55);
+main .menu .actions {
+  display: flex;
+}
+main .menu .actions button {
+  padding: 0.35rem;
   color: white;
   font-size: 1.2rem;
   text-transform: capitalize;
@@ -147,9 +165,24 @@ main .options button {
   cursor: pointer;
   margin-bottom: 1.2rem;
   transition: all 0.2s ease-out;
+  display: grid;
+  place-content: center;
 }
-main .options button:hover {
-  background-color: rgba(0, 148, 209, 0.8);
+main .menu .actions button img {
+  aspect-ratio: 1;
+  height: 40px;
+}
+main .menu .actions button.start {
+  width: 55%;
+  margin-right: 1rem;
+  background-color: #34c16a;
+}
+main .menu .actions button.surrender {
+  width: 45%;
+  background-color: #9bd9e8;
+}
+main .menu .actions button:hover {
+  opacity: 0.7;
 }
 
 header {
@@ -170,26 +203,6 @@ header h1 {
 header img {
   height: 100%;
   margin-left: 1.5rem;
-}
-
-.optionGroup {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.optionGroup .singleOption {
-  margin-bottom: 0.5rem;
-}
-.optionGroup .singleOption label {
-  margin-bottom: 1rem;
-}
-
-.display_container {
-  background-color: rgba(0, 148, 209, 0.55);
-  border-radius: 5px;
-  padding: 0.8rem 1rem;
-  display: flex;
-  align-items: center;
 }
 
 #boardgame {

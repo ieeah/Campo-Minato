@@ -25,14 +25,14 @@
       <img src="./imgs/icons/cells_icons/bomb.svg" alt="" />
     </header>
     <main>
-      <div class="options">
+      <div class="menu">
         <div class="reactions">
           <div id="reactions_text">Weee Giochiamoo?</div>
           <img id="reactions_icon" src="./imgs/icons/new_game.svg" alt="" />
         </div>
         <div class="options_wrap">
           <div class="optionGroup">
-            <div class="singleOption">
+            <div class="singleOption select">
               <label for="levelSelect">Difficoltà</label>
               <select name="levelSelect" id="levelSelect">
                 <option value="1" name="">Principiante</option>
@@ -48,7 +48,7 @@
               <label>Flags</label>
               <div id="flaggedCells" class="display_container"></div>
             </div>
-            <div class="singleOption">
+            <div class="singleOption long">
               <label>Bombe rimanenti</label>
               <div id="unexploded" class="display_container"></div>
             </div>
@@ -58,14 +58,21 @@
               <label for="">Timer</label>
               <div id="timerDisplay" class="display_container">0</div>
             </div>
-            <div class="singleOption">
+            <div class="singleOption long">
               <label for="">Celle Scoperte</label>
               <div id="clickedCellsDisplay" class="display_container">0</div>
             </div>
           </div>
         </div>
-        <button id="start">start game</button>
-        <button id="surrender">surrender</button>
+        <div class="actions">
+          <button id="start" class="start">
+            <img src="./imgs/icons/actions_icons/action_play.svg" alt="Start Game">
+          </button>
+            
+          <button id="surrender" class="surrender">
+            <img src="./imgs/icons/actions_icons/action_surrender.svg" alt="Surrender">
+          </button>
+        </div>
       </div>
       <div id="boardgame">
         <h1 class="start_message">
