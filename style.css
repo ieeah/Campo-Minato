@@ -98,24 +98,24 @@ main .options {
   flex-direction: column;
   width: 20%;
 }
-main .options .options_head {
+main .options .reactions {
   width: 100%;
   display: flex;
   justify-content: space-between;
   margin-bottom: 1.6rem;
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-family: "Inria Sans", sans-serif;
   color: #34c16a;
 }
-main .options .options_head.bad {
+main .options .reactions #reactions_text.bad {
   color: #ec2251;
 }
-main .options .options_head #icon {
+main .options .reactions #icon {
   width: 20%;
   aspect-ratio: 1;
-  background-image: url("./imgs/icons/moves_reactions/ok_cool.svg");
-  background-size: contain;
-  background-position: center;
+}
+main .options .reactions #icon #move_react {
+  width: 100%;
 }
 main .options .options_wrap {
   margin-bottom: 1.6rem;
@@ -177,8 +177,8 @@ header h1 {
 
 .display_wrap {
   padding: 5px;
-  background: #0b525b;
-  background: linear-gradient(128deg, #0b525b 11%, #ef476f 90%);
+  background: rgb(11, 82, 91);
+  background: linear-gradient(128deg, rgb(11, 82, 91) 11%, rgb(239, 71, 111) 90%);
   border-radius: 25px;
   opacity: 0.7;
   margin-left: 2rem;
@@ -285,6 +285,4 @@ footer a:hover {
   background-color: #ef476f;
   padding: 2.2rem 0.7rem 1.2rem 0.7rem;
   border-radius: 4px;
-}
-
-/*# sourceMappingURL=style.css.map */
+}/*# sourceMappingURL=style.css.map */

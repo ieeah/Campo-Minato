@@ -110,28 +110,30 @@ main {
     display: flex;
     flex-direction: column;
     width: 20%;
-    .options_head {
+
+    .reactions {
       width: 100%;
       display: flex;
       justify-content: space-between;
       margin-bottom: $fz-16;
-      font-size: 2.2rem;
+      font-size: 1.8rem;
       font-family: $font-primary;
       color: $accent;
-      &.bad {
+
+      #reactions_text.bad {
         color: $color-deny;
       }
-      .text {
 
-      }
       #icon {
         width: 20%;
         aspect-ratio: 1;
-        background-image: url('./imgs/icons/moves_reactions/ok_cool.svg');
-        background-size: contain;
-        background-position: center;
+
+        #move_react {
+          width: 100%;
+        }
       }
     }
+
     .options_wrap {
       margin-bottom: $fz-16;
 

@@ -1,4 +1,4 @@
-import translations from "./js/translations";
+// import translations from "./js/translations";
 
 // crea le referenze al DOM per accesso semplificato.
 const board = document.getElementById("boardgame");
@@ -11,21 +11,20 @@ const modal = document.querySelector(".modal");
 const modalMessage = document.querySelector(".modal_message");
 const modalConfirm = document.querySelector(".modal_button.confirm");
 const modalDeny = document.querySelector(".modal_button.deny");
-const header_text = document.getElementById("options_head_text");
-const header_icon = document.getElementById("icon");
+const header_text = document.getElementById("reactions_text");
+const header_icon = document.getElementById("reactions_icon");
 const icons = {
   reactions: [
-    ["bad_cry", "bad_emb"],
+    ["bad_cry", "bad_emb", "end_cross"],
     ["ok_cool", "ok_hearts", "ok_perv"],
-    ["end_cross"],
   ],
   actions: ["action_play", "action_surrender"],
   cells: ["bomb", "flag"],
 };
-
-header_text.innerText = "#fff";
-
-// header_icon.style.backgroundImage = "url(./imgs/icons/moves_reactions/end_cross.svg)";
+const reaction_texts = {
+  bad: ["Oh No!", "Peccato!", "Nope!", "Game Over!", "KO tecnico!", "Non Va!", "Looooser!"],
+  good: ["Grande!", "Vai così!", "Boom Baby!", "Fenomeno!", "Che numero!", "Che gioco!", "Sei Forte!"],
+};
 
 // creo le variabili necessarie per lo svolgimento del gioco
 
@@ -88,6 +87,8 @@ const resetGame = () => {
   flaggedCells = [];
   bombs = [];
   boardSize = 10;
+  header_text.innerText = "Weee Giochiamoo?";
+  header_icon.src = "./imgs/icons/new_game.svg";
   setTheUI();
 };
 
@@ -190,6 +191,8 @@ const gameOver = () => {
   highlightBombs();
   board.style.pointerEvents = "none";
   alert("Oh no!\nHai perso la partita!\nTranquillo, puoi farne un'altra!");
+  header_text.classList.remove("bad");
+  resetGame();
 };
 
 /**
@@ -199,9 +202,11 @@ const handleClick = (id, inALoop = false) => {
   cell = virtualCells[id].DOMCell.cellReference;
   if (!flaggedCells.includes(id)) {
     if (isABomb(id)) {
+      handleReaction("bad");
       gameOver();
     } else if (!virtualCells[id].clicked) {
       virtualCells[id].clicked = true;
+      handleReaction("good");
       let localCloseCells = defineCloseCells(id);
       let closeBombsCounter = countCloseBombs();
       if (closeBombsCounter === 0 && !inALoop) {
@@ -218,6 +223,34 @@ const handleClick = (id, inALoop = false) => {
   }
 };
 
+function handleReaction(type) {
+  let reaction = "";
+  let index = -1;
+  let textIndex = -1;
+  let isBad = header_text.classList.contains("bad");
+  switch (type) {
+    case "bad":
+      index = Math.floor(Math.random() * icons.reactions[0].length);
+      textIndex = Math.floor(Math.random() * reaction_texts.bad.length);
+      reaction = icons.reactions[0][index];
+      header_text.innerText = reaction_texts.bad[textIndex];
+      header_icon.src = `./imgs/icons/moves_reactions/${reaction}.svg`;
+      if(!isBad) {
+        header_text.classList.add("bad");
+      }
+      break;
+    case "good":
+      index = Math.floor(Math.random() * icons.reactions[1].length);
+      textIndex = Math.floor(Math.random() * reaction_texts.good.length);
+      reaction = icons.reactions[1][index];
+      header_text.innerText = reaction_texts.good[textIndex];
+      header_icon.src = `./imgs/icons/moves_reactions/${reaction}.svg`;
+      if(isBad) {
+        header_text.classList.remove("bad");
+      }
+      break;
+  }
+}
 /**
  * Verifica se le celle adiacenti hanno contatore zero, in quel caso gli applica la funzione handleClick
  */
