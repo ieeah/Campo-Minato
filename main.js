@@ -152,8 +152,8 @@ const getDifficultyLevel = () => {
       break;
 
     case "5":
-      boardSize = 30;
-      n_Bombs = 110;
+      boardSize = 32;
+      n_Bombs = 120;
   }
 };
 

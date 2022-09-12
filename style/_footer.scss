@@ -1,0 +1,21 @@
+footer {
+  text-align: center;
+  height: 5vh;
+  display: flex;
+  width: 80%;
+  margin-inline: auto;
+  font-weight: 200;
+
+  a {
+    color: $clear;
+    transition: all .35s ease-in;
+    margin-left: .7rem;
+
+    &:hover {
+      background-color: $bomb;
+      padding: .7rem;
+      border-radius: 4px;
+      margin-left: 0;
+    }
+  }
+}
