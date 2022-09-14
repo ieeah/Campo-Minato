@@ -18,6 +18,21 @@ header img {
   height: 100%;
   margin-left: 1.5rem;
 }
+header button#helpButton {
+  background-color: rgba(52, 193, 106, 0.6);
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 0.7rem;
+  margin-right: 1.5rem;
+  font-weight: bold;
+  color: #001220;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: cubic-bezier(0.6, 0.04, 0.98, 0.335) 0.15s;
+}
+header button#helpButton:hover {
+  background-color: #34c16a;
+}
 
 .menu {
   display: flex;

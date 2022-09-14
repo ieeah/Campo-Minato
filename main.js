@@ -45,27 +45,19 @@ const reaction_texts = {
   ],
 };
 
-// creo le variabili necessarie per lo svolgimento del gioco
-let allCells = [];
 // il numero di bombe presenti sul campo
 let n_Bombs = 12;
-// l'elenco degli id delle celle che sono bombe
-let virtualBombs = [];
 // la dimensione del campo
 let boardSize = 10;
 // flag per capire se il gioco è in corso o meno (potrebbe essere utile per il reset del gioco ed il setting di un timer)
 // l'elenco degli id delle celle che sono state flaggate
 let flaggedCells = [];
 // l'elenco degli id delle bombe che sono state flaggate
-let flaggedBombs = 0;
+let flaggedBombs = [];
 // il numero di bombe che rimangono da scoprire
 let remainingBombs = n_Bombs;
 // le celle vicine alla cella cliccata
 let theseAreCloseCells = [];
-// il numero di bombe tra le celle vicine alla cella cliccata
-let closeCounter = 0;
-// id e referenza alla cella cliccata
-let clickedCell = { id: null, DOMCell: { x: null, y: null, cell: null } };
 
 let firstClick = true;
 // una rappresentazione fittizia di tutte le celle
@@ -73,7 +65,7 @@ let virtualCells = [];
 
 let paused = false;
 let bombs = []; // array di id delle celle che sono bombe
-
+let usedHelps = 0;
 let clickedCells = 0;
 
 let gameTimer = null;
@@ -96,6 +88,10 @@ surrenderButton.addEventListener("click", () => {
   surrender();
 });
 
+document.getElementById("helpButton").addEventListener("click", () => {
+  hint();
+});
+
 /**
  * Funzione che avvia la creazione del campo di gioco e prepara tutti i dati necessari per lo svolgimento del gioco.
  */
@@ -111,13 +107,10 @@ function startGame() {
  * Funzione che resetta tutti i dati di gioco e azzera l'interfaccia.
  */
 function resetGame() {
-  allCells = [];
   n_Bombs = 12;
   remainingBombs = n_Bombs;
-  flaggedBombs = 0;
+  flaggedBombs = [];
   theseAreCloseCells = [];
-  closeCounter = 0;
-  clickedCell = { id: null, DOMCell: { x: null, y: null, cell: null } };
   virtualCells = [];
   flaggedCells = [];
   bombs = [];
@@ -177,13 +170,6 @@ function generateBombsIds() {
 }
 
 /**
- * Funzione che setta la cella cliccata con i riferimenti alla cella stessa, il suo id e le sue coordinate.
- */
-function setClickedCell(id, x, y, cellReference) {
-  clickedCell = { id: id, DOMCell: { x: x, y: y, cell: cellReference } };
-}
-
-/**
  * Generazione delle celle del DOM, di ogni cella viene salvata una referenza alla cella stessa in virtualCells.
  */
 function generateBoard() {
@@ -202,7 +188,6 @@ function generateBoard() {
       const cellId = parseInt(j);
       // click normale, si setta la cella cliccata e si controlla che sia o meno una bomba
       cell.addEventListener("click", () => {
-        setClickedCell(cellId, x, y, cell);
         handleClick(cellId);
       });
 
@@ -211,10 +196,6 @@ function generateBoard() {
         e.preventDefault();
         flagCell(cellId);
       });
-
-      if (bombs.includes(cellId)) {
-        virtualBombs.push(cell);
-      }
 
       virtualCells[cellId] = {
         id: cellId,
@@ -238,6 +219,20 @@ function gameOver() {
   clearInterval(gameTimer);
 }
 
+function hint() {
+  if (firstClick === false && usedHelps < 1) {
+    let index = Math.floor(Math.random() * bombs.length);
+    if (!flaggedBombs.includes(bombs[index])) {
+      flagCell(bombs[index]);
+      usedHelps++;
+    } else {
+      hint();
+    }
+  } else {
+    showModal("hints");
+  }
+}
+
 function showModal(outcome) {
   switch (outcome) {
     case "win":
@@ -247,6 +242,10 @@ function showModal(outcome) {
     case "surrender":
       modalMessage.innerText =
         "Sicuro di volerti arrendere?\nLa partita verrà salvata come persa!";
+      break;
+    case "hints":
+      modalMessage.innerText =
+        "Hai già usato un aiuto, oppure devi ancora iniziare la partita!";
       break;
     default:
       modalMessage.innerText = "Oh no che peccato!\nVuoi la rivincita?";
@@ -273,8 +272,8 @@ function closeModal() {
 }
 
 function youWin() {
+  clearInterval(gameTimer);
   endGame("win");
-  // clearInterval(gameTimer);
 }
 
 function endGame(outcome) {
@@ -294,8 +293,9 @@ function endGameNoModal(outcome) {
  * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
  */
 function handleClick(id) {
+  // logData();
   if (firstClick) {
-    if(isABomb(id)) {
+    if (isABomb(id)) {
       generateBombsIds();
       handleClick(id);
     }
@@ -310,7 +310,7 @@ function handleClick(id) {
       clickedCells++;
       virtualCells[id].clicked = true;
       handleReaction("good");
-      let localCloseCells = defineCloseCells(id);
+      defineCloseCells(id);
       let closeBombsCounter = countCloseBombs();
       if (closeBombsCounter === 0) {
         cell.classList.add("not");
@@ -421,7 +421,7 @@ function colorCounter(closeCounter) {
  * Verifica che tutte le celle flaggate siano effettivamente delle bombe, e determina se si è vinto la partita o se si è flaggata qualche cella che non sia una bomba.
  */
 function allBombsFlagged() {
-  if (flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
+  if (flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
     paused = true;
@@ -445,9 +445,11 @@ function isABomb(id) {
  * Evidenzia tutte le celle che sono delle bombe.
  */
 function highlightBombs() {
-  virtualBombs.forEach((bomb) => {
-    bomb.classList.remove("flagged");
-    bomb.classList.add("bomb");
+  virtualCells.forEach((cell) => {
+    if (bombs.includes(cell.id)) {
+      cell.DOMCell.cellReference.classList.remove("flagged");
+      cell.DOMCell.cellReference.classList.add("bomb");
+    }
   });
 }
 
@@ -461,13 +463,13 @@ function flagCell(id) {
       cell.classList.toggle("flagged");
       flaggedCells.push(id);
       if (bombs.includes(id)) {
-        flaggedBombs++;
+        flaggedBombs.push(id);
       }
     } else {
       flaggedCells.splice(flaggedCells.indexOf(id), 1);
       cell.classList.toggle("flagged");
       if (bombs.includes(id)) {
-        flaggedBombs--;
+        flaggedBombs.splice(flaggedBombs.indexOf(id), 1);
       }
     }
   }
@@ -508,7 +510,6 @@ function defineCloseCells(_id) {
     }
   });
   theseAreCloseCells = surroundingCells;
-  return surroundingCells;
 }
 
 /**
