@@ -296,11 +296,9 @@ function endGameNoModal(outcome) {
 function handleClick(id) {
   if (firstClick) {
     if(isABomb(id)) {
-      console.log("primo click bomba");
       generateBombsIds();
       handleClick(id);
     }
-    console.log("primo click no bomba");
     firstClick = false;
   }
   let cell = virtualCells[id].DOMCell.cellReference;

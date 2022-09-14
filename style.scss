@@ -3,6 +3,7 @@
 @import './style/menu';
 @import './style/boardgame';
 @import './style/footer';
+@import './style/modal';
 
 // reset
 
@@ -26,90 +27,14 @@ body {
   position: relative;
 }
 
-.modal {
-  &.hidden {
-    pointer-events: none;
-    opacity: 0;
-  }
-  .hidden {
-    pointer-events: none;
-    opacity: 0;
-  }
-
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all .3s;
-
-  .overlay {
-    width: 100%;
-    height: 100%;
-    background-color: rgba($bg-color, .7);
-    position: absolute;
-  }
-
-  .modal_show {
-    width: 700px;
-    height: 350px;
-    border-radius: 30px;
-    background-color: $shadow;
-    box-shadow:
-      inset 0 0 10px $bomb,
-      inset 0 0 18px $bomb,
-      inset 0 0 25px $bg-color;
-    z-index: 2;
-    padding: 1.5rem;
-
-    .modal_message {
-      padding: 1.5rem;
-      width: 100%;
-      height: 80%;
-      color: $clear;
-      font-size: 1.75rem;
-    }
-
-    .actions {
-      height: 20%;
-      display: flex;
-      justify-content: end;
-      align-items: center;
-      padding-right: .7rem;
-
-      .modal_button {
-        padding: .5rem 2rem;
-        margin-left: 1rem;
-        color: $clear;
-        border: none;
-        border-radius: 10px;
-        font-size: 1.3rem;
-        font-weight: bold;
-        cursor: pointer;
-        position: relative;
-
-        &.surrender {
-          background-color: rgba($color: $color-deny, $alpha: .5);
-          &:hover {
-            background-color: rgba($color: $color-deny, $alpha: 1);
-          }
-        }
-
-        &.continue {
-          background-color: $accent;
-
-        }
-      }
-    }
-  }
-}
-
 main {
   display: flex;
   justify-content: space-between;
   width: 80%;
   margin-inline: auto;
+}
+
+.hidden {
+  pointer-events: none;
+  opacity: 0;
 }
