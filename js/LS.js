@@ -51,7 +51,6 @@ export function writeMatch(outcome, timestamp, level) {
     let oldRawHistory = localStorage.getItem("mineSweeper_ieeah_history");
     let oldParsedHistory = JSON.parse(oldRawHistory);
     let oldMatches = oldParsedHistory.matches;
-    console.log({ oldRawHistory, oldParsedHistory, oldMatches });
 
     if (oldMatches.length < 10) {
       oldMatches.unshift(newMatch);
@@ -75,7 +74,6 @@ export function writeMatch(outcome, timestamp, level) {
     newHistory = JSON.stringify({
       matches: [newMatch],
     });
-    console.log("newHistoryBeforeSettingLocalStorage");
   }
 
   localStorage.setItem("mineSweeper_ieeah_history", newHistory);

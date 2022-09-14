@@ -10,8 +10,8 @@ const flagsDisplay = document.getElementById("flaggedCells");
 const remainingDisplay = document.getElementById("unexploded");
 const modal = document.querySelector(".modal");
 const modalMessage = document.querySelector(".modal_message");
-const modalConfirm = document.querySelector(".modal_button.confirm");
-const modalDeny = document.querySelector(".modal_button.deny");
+const modalSurrender = document.querySelector(".modal_button.surrender");
+const modalContinue = document.querySelector(".modal_button.continue");
 const header_text = document.getElementById("reactions_text");
 const header_icon = document.getElementById("reactions_icon");
 const clickedCellsDisplay = document.getElementById("clickedCellsDisplay");
@@ -66,11 +66,12 @@ let theseAreCloseCells = [];
 let closeCounter = 0;
 // id e referenza alla cella cliccata
 let clickedCell = { id: null, DOMCell: { x: null, y: null, cell: null } };
+
+let firstClick = true;
 // una rappresentazione fittizia di tutte le celle
 let virtualCells = [];
-// una flag per definire se la partita è stata vinta o meno.
-let victory = null;
 
+let paused = false;
 let bombs = []; // array di id delle celle che sono bombe
 
 let clickedCells = 0;
@@ -85,8 +86,10 @@ controlHistoryDisplay();
 startButton.addEventListener("click", () => {
   startGame();
   gameTimer = setInterval(() => {
-    seconds++;
-    setTheUI();
+    if(!paused) {
+      seconds++;
+      setTheUI();
+    }
   }, 1000);
 });
 surrenderButton.addEventListener("click", () => {
@@ -96,7 +99,7 @@ surrenderButton.addEventListener("click", () => {
 /**
  * Funzione che avvia la creazione del campo di gioco e prepara tutti i dati necessari per lo svolgimento del gioco.
  */
-const startGame = () => {
+function startGame() {
   resetGame();
   getDifficultyLevel();
   generateBombsIds();
@@ -107,10 +110,9 @@ const startGame = () => {
 /**
  * Funzione che resetta tutti i dati di gioco e azzera l'interfaccia.
  */
-const resetGame = () => {
+function resetGame() {
   allCells = [];
   n_Bombs = 12;
-  victory = null;
   remainingBombs = n_Bombs;
   flaggedBombs = 0;
   theseAreCloseCells = [];
@@ -125,10 +127,7 @@ const resetGame = () => {
   clickedCells = 0;
   seconds = 0;
   minutes = 0;
-  if (gameTimer) {
-    clearInterval(gameTimer);
-    gameTimer = null;
-  }
+  firstClick = true;
   setTheUI();
   controlHistoryDisplay();
 };
@@ -136,7 +135,7 @@ const resetGame = () => {
 /**
  * Funzione che setta il numero di celle e di bombe in base al livello di difficoltà selezionato dall'utente.
  */
-const getDifficultyLevel = () => {
+function getDifficultyLevel() {
   switch (difficulty.value) {
     case "1":
       boardSize = 10;
@@ -167,7 +166,7 @@ const getDifficultyLevel = () => {
 /**
  * Generazione degli id delle celle che saranno delle bombe.
  */
-const generateBombsIds = () => {
+function generateBombsIds() {
   while (bombs.length < n_Bombs) {
     let randomId = Math.floor(Math.random() * (boardSize * boardSize));
     if (!bombs.includes(randomId)) {
@@ -179,14 +178,14 @@ const generateBombsIds = () => {
 /**
  * Funzione che setta la cella cliccata con i riferimenti alla cella stessa, il suo id e le sue coordinate.
  */
-const setClickedCell = (id, x, y, cellReference) => {
+function setClickedCell(id, x, y, cellReference) {
   clickedCell = { id: id, DOMCell: { x: x, y: y, cell: cellReference } };
 };
 
 /**
  * Generazione delle celle del DOM, di ogni cella viene salvata una referenza alla cella stessa in virtualCells.
  */
-const generateBoard = () => {
+function generateBoard() {
   // creo x celle per coprire le dimensioni del campo
   board.innerHTML = "";
   let j = 0;
@@ -232,31 +231,72 @@ const generateBoard = () => {
 /**
  * Manda un alert di sconfitta al giocatore, chiama la funzione highlightBombs() e disattiva tutti i click sulla tavola di gioco.
  */
-const gameOver = () => {
+function gameOver() {
   highlightBombs();
-  endGame(
-    "lost",
-    "Oh no! Che Peccato!\nTranquillo, puoi sempre giocarne un'altra!"
-  );
+  endGame("lost");
+  clearInterval(gameTimer);
 };
 
-function youWin() {
-  endGame("win", "Sei un Grande!!!");
+function showModal(outcome) {
+  switch (outcome) {
+    case "win":
+      modalMessage.innerText =
+        "Grande!\nHai vinto! pronto per la prossima partita?";
+      break;
+    case "surrender":
+      modalMessage.innerText =
+        "Sicuro di volerti arrendere?\nLa partita verrà salvata come persa!";
+      break;
+    default:
+      modalMessage.innerText = "Oh no che peccato!\nVuoi la rivincita?";
+      break;
+  }
+  modal.classList.remove("hidden");
+  if (outcome === "surrender") {
+    modalSurrender.classList.remove("hidden");
+  }
+  modalContinue.addEventListener("click", () => {
+    closeModal();
+  });
+
+  modalSurrender.addEventListener("click", () => {
+    clearInterval(gameTimer);
+    closeModal();
+    modalSurrender.classList.add("hidden");
+    endGameNoModal("lost");
+  });
 }
 
-function endGame(outcome, alertMSG) {
+function closeModal() {
+  modal.classList.add("hidden");
+}
+
+function youWin() {
+  endGame("win");
+  // clearInterval(gameTimer);
+}
+
+function endGame(outcome) {
   writeMatch(outcome, Date.now(), difficulty.value);
   board.style.pointerEvents = "none";
-  alert(alertMSG);
+  showModal(outcome);
   header_text.classList.remove("bad");
-  clearInterval(gameTimer);
-  resetGame();
+}
+
+function endGameNoModal(outcome) {
+  writeMatch(outcome, Date.now(), difficulty.value);
+  board.style.pointerEvents = "none";
+  header_text.classList.remove("bad");
 }
 
 /**
  * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
  */
-const handleClick = (id, inALoop = false) => {
+function handleClick(id) {
+  if(firstClick) {
+    console.log("first click");
+    firstClick = false;
+  }
   let cell = virtualCells[id].DOMCell.cellReference;
   if (!flaggedCells.includes(id)) {
     if (isABomb(id)) {
@@ -268,7 +308,7 @@ const handleClick = (id, inALoop = false) => {
       handleReaction("good");
       let localCloseCells = defineCloseCells(id);
       let closeBombsCounter = countCloseBombs();
-      if (closeBombsCounter === 0 && !inALoop) {
+      if (closeBombsCounter === 0) {
         cell.classList.add("not");
         checkSurroundingCells(id);
       } else {
@@ -327,7 +367,9 @@ function setTheUI() {
     minutes++;
     seconds = 0;
   }
-  let timeString = `${minutes.toString()}:${seconds.toString().padStart(2, "0")}`;
+  let timeString = `${minutes.toString()}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
   flagsDisplay.innerText = flaggedCells.length;
   remainingDisplay.innerText =
     n_Bombs - flaggedCells.length < 0 ? "0" : n_Bombs - flaggedCells.length;
@@ -378,21 +420,25 @@ function allBombsFlagged() {
   if (flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
-    alert("Hai flaggato qualche casella ancora valida!");
+    paused = true;
+    alert("Hai flaggato qualche casella ancora valida!\nHai 3 secondi per sflaggarne almeno una e continuare a giocare, altrimenti rivedrai questo messaggio");
+    setTimeout(() => {
+      paused = false;
+    }, 3000);
   }
 }
 
 /**
  * Controlla se la cella cliccata sia una bomba o meno.
  */
-const isABomb = (id) => {
+function isABomb(id) {
   return bombs.includes(id) ? true : false;
 };
 
 /**
  * Evidenzia tutte le celle che sono delle bombe.
  */
-const highlightBombs = () => {
+function highlightBombs() {
   virtualBombs.forEach((bomb) => {
     bomb.classList.remove("flagged");
     bomb.classList.add("bomb");
@@ -402,7 +448,7 @@ const highlightBombs = () => {
 /**
  * Permette di flaggare e bloccare le celle che si ritiene essere bombe
  */
-const flagCell = (id) => {
+function flagCell(id) {
   let cell = virtualCells[id].DOMCell.cellReference;
   if (!cell.classList.contains("not")) {
     if (!flaggedCells.includes(id)) {
@@ -425,7 +471,7 @@ const flagCell = (id) => {
 /**
  * Controlla quante siano le bombe tra le 8 celle adiacenti a clickedCell
  */
-const countCloseBombs = () => {
+function countCloseBombs() {
   let counter = 0;
   theseAreCloseCells.forEach((cell) => {
     if (bombs.includes(cell.id)) {
@@ -438,7 +484,7 @@ const countCloseBombs = () => {
 /**
  * Definisce quali siano le celle adiacenti a clickedCell e le raccoglie in theseAreCloseCells.
  */
-const defineCloseCells = (_id) => {
+function defineCloseCells(_id) {
   let surroundingCells = [];
   let x = virtualCells[_id].DOMCell.x;
   let y = virtualCells[_id].DOMCell.y;
@@ -520,11 +566,6 @@ function between(ref, toCompare) {
 /**
  * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
  */
-const surrender = () => {
-  let sure = confirm("Sicuro di volerti arrendere?");
-  if (sure) {
-    gameOver();
-  } else {
-    alert("Ottima scelta!\nIn bocca al lupo!");
-  }
+function surrender() {
+  endGame("surrender");
 };
