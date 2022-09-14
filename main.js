@@ -77,6 +77,8 @@ let clickedCells = 0;
 
 let gameTimer = null;
 let seconds = 0;
+let minutes = 0;
+
 setTheUI();
 controlHistoryDisplay();
 
@@ -122,6 +124,7 @@ const resetGame = () => {
   header_icon.src = "./imgs/icons/new_game.svg";
   clickedCells = 0;
   seconds = 0;
+  minutes = 0;
   if (gameTimer) {
     clearInterval(gameTimer);
     gameTimer = null;
@@ -231,7 +234,10 @@ const generateBoard = () => {
  */
 const gameOver = () => {
   highlightBombs();
-  endGame("lost", "Oh no! Che Peccato!\nTranquillo, puoi sempre giocarne un'altra!");
+  endGame(
+    "lost",
+    "Oh no! Che Peccato!\nTranquillo, puoi sempre giocarne un'altra!"
+  );
 };
 
 function youWin() {
@@ -275,7 +281,6 @@ const handleClick = (id, inALoop = false) => {
     }
   }
 };
-
 function handleReaction(type) {
   let reaction = "";
   let index = -1;
@@ -318,12 +323,17 @@ function checkSurroundingCells(_id) {
  * Chiama allBombsFlagged().
  */
 function setTheUI() {
+  if (seconds === 60) {
+    minutes++;
+    seconds = 0;
+  }
+  let timeString = `${minutes.toString()}:${seconds.toString().padStart(2, "0")}`;
   flagsDisplay.innerText = flaggedCells.length;
   remainingDisplay.innerText =
     n_Bombs - flaggedCells.length < 0 ? "0" : n_Bombs - flaggedCells.length;
   allBombsFlagged();
   clickedCellsDisplay.innerText = clickedCells;
-  timerDisplay.innerText = seconds;
+  timerDisplay.innerText = timeString;
 }
 
 /**
@@ -488,15 +498,14 @@ function printHistory() {
 }
 
 function controlHistoryDisplay() {
-    if (historyExist()) {
-      document.querySelector("[for=\"history_display\"").style="display: block;";
-      historyDisplay.style = "display: block;";
-      printHistory();
-    } else {
-      document.querySelector('[for="history_display"').style =
-        "display: none;";
-      historyDisplay.style = "display: none;";
-    }
+  if (historyExist()) {
+    document.querySelector('[for="history_display"').style = "display: block;";
+    historyDisplay.style = "display: block;";
+    printHistory();
+  } else {
+    document.querySelector('[for="history_display"').style = "display: none;";
+    historyDisplay.style = "display: none;";
+  }
 }
 
 /**

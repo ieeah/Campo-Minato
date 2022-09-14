@@ -61,7 +61,7 @@ export function writeMatch(outcome, timestamp, level) {
     } else {
       newMatches.unshift(newMatch);
       let i = 0;
-      while (newMatches.length <= 10) {
+      while (newMatches.length <= 9) {
         newMatches.push(oldMatches[i]);
         i++;
       }
