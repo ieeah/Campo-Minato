@@ -86,7 +86,7 @@ controlHistoryDisplay();
 startButton.addEventListener("click", () => {
   startGame();
   gameTimer = setInterval(() => {
-    if(!paused) {
+    if (!paused) {
       seconds++;
       setTheUI();
     }
@@ -106,7 +106,7 @@ function startGame() {
   setTheUI();
   controlHistoryDisplay();
   generateBoard();
-};
+}
 /**
  * Funzione che resetta tutti i dati di gioco e azzera l'interfaccia.
  */
@@ -130,7 +130,7 @@ function resetGame() {
   firstClick = true;
   setTheUI();
   controlHistoryDisplay();
-};
+}
 
 /**
  * Funzione che setta il numero di celle e di bombe in base al livello di difficoltà selezionato dall'utente.
@@ -161,26 +161,27 @@ function getDifficultyLevel() {
       boardSize = 32;
       n_Bombs = 120;
   }
-};
+}
 
 /**
  * Generazione degli id delle celle che saranno delle bombe.
  */
 function generateBombsIds() {
+  bombs = [];
   while (bombs.length < n_Bombs) {
     let randomId = Math.floor(Math.random() * (boardSize * boardSize));
     if (!bombs.includes(randomId)) {
       bombs.push(randomId);
     }
   }
-};
+}
 
 /**
  * Funzione che setta la cella cliccata con i riferimenti alla cella stessa, il suo id e le sue coordinate.
  */
 function setClickedCell(id, x, y, cellReference) {
   clickedCell = { id: id, DOMCell: { x: x, y: y, cell: cellReference } };
-};
+}
 
 /**
  * Generazione delle celle del DOM, di ogni cella viene salvata una referenza alla cella stessa in virtualCells.
@@ -226,7 +227,7 @@ function generateBoard() {
     }
   }
   board.style.pointerEvents = "all";
-};
+}
 
 /**
  * Manda un alert di sconfitta al giocatore, chiama la funzione highlightBombs() e disattiva tutti i click sulla tavola di gioco.
@@ -235,7 +236,7 @@ function gameOver() {
   highlightBombs();
   endGame("lost");
   clearInterval(gameTimer);
-};
+}
 
 function showModal(outcome) {
   switch (outcome) {
@@ -293,8 +294,13 @@ function endGameNoModal(outcome) {
  * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
  */
 function handleClick(id) {
-  if(firstClick) {
-    console.log("first click");
+  if (firstClick) {
+    if(isABomb(id)) {
+      console.log("primo click bomba");
+      generateBombsIds();
+      handleClick(id);
+    }
+    console.log("primo click no bomba");
     firstClick = false;
   }
   let cell = virtualCells[id].DOMCell.cellReference;
@@ -320,7 +326,7 @@ function handleClick(id) {
       setTheUI();
     }
   }
-};
+}
 function handleReaction(type) {
   let reaction = "";
   let index = -1;
@@ -421,7 +427,9 @@ function allBombsFlagged() {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
     paused = true;
-    alert("Hai flaggato qualche casella ancora valida!\nHai 3 secondi per sflaggarne almeno una e continuare a giocare, altrimenti rivedrai questo messaggio");
+    alert(
+      "Hai flaggato qualche casella ancora valida!\nHai 3 secondi per sflaggarne almeno una e continuare a giocare, altrimenti rivedrai questo messaggio"
+    );
     setTimeout(() => {
       paused = false;
     }, 3000);
@@ -433,7 +441,7 @@ function allBombsFlagged() {
  */
 function isABomb(id) {
   return bombs.includes(id) ? true : false;
-};
+}
 
 /**
  * Evidenzia tutte le celle che sono delle bombe.
@@ -443,7 +451,7 @@ function highlightBombs() {
     bomb.classList.remove("flagged");
     bomb.classList.add("bomb");
   });
-};
+}
 
 /**
  * Permette di flaggare e bloccare le celle che si ritiene essere bombe
@@ -466,7 +474,7 @@ function flagCell(id) {
     }
   }
   setTheUI();
-};
+}
 
 /**
  * Controlla quante siano le bombe tra le 8 celle adiacenti a clickedCell
@@ -479,7 +487,7 @@ function countCloseBombs() {
     }
   });
   return counter;
-};
+}
 
 /**
  * Definisce quali siano le celle adiacenti a clickedCell e le raccoglie in theseAreCloseCells.
@@ -503,7 +511,7 @@ function defineCloseCells(_id) {
   });
   theseAreCloseCells = surroundingCells;
   return surroundingCells;
-};
+}
 
 /**
  * Aggiunge al display dello storico delle partite tutte le partite
@@ -568,4 +576,4 @@ function between(ref, toCompare) {
  */
 function surrender() {
   endGame("surrender");
-};
+}
