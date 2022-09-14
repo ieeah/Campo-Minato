@@ -1,4 +1,5 @@
 // import translations from "./js/translations";
+import { historyExist, getHistory, writeMatch } from "./js/LS.js";
 
 // crea le referenze al DOM per accesso semplificato.
 const board = document.getElementById("boardgame");
@@ -14,6 +15,7 @@ const modalDeny = document.querySelector(".modal_button.deny");
 const header_text = document.getElementById("reactions_text");
 const header_icon = document.getElementById("reactions_icon");
 const clickedCellsDisplay = document.getElementById("clickedCellsDisplay");
+const historyDisplay = document.getElementById("history_display");
 const icons = {
   reactions: [
     ["bad_cry", "bad_emb", "end_cross"],
@@ -44,7 +46,6 @@ const reaction_texts = {
 };
 
 // creo le variabili necessarie per lo svolgimento del gioco
-
 let allCells = [];
 // il numero di bombe presenti sul campo
 let n_Bombs = 12;
@@ -77,6 +78,7 @@ let clickedCells = 0;
 let gameTimer = null;
 let seconds = 0;
 setTheUI();
+controlHistoryDisplay();
 
 startButton.addEventListener("click", () => {
   startGame();
@@ -97,6 +99,7 @@ const startGame = () => {
   getDifficultyLevel();
   generateBombsIds();
   setTheUI();
+  controlHistoryDisplay();
   generateBoard();
 };
 /**
@@ -119,11 +122,12 @@ const resetGame = () => {
   header_icon.src = "./imgs/icons/new_game.svg";
   clickedCells = 0;
   seconds = 0;
-  if(gameTimer) {
+  if (gameTimer) {
     clearInterval(gameTimer);
     gameTimer = null;
   }
   setTheUI();
+  controlHistoryDisplay();
 };
 
 /**
@@ -227,17 +231,27 @@ const generateBoard = () => {
  */
 const gameOver = () => {
   highlightBombs();
-  board.style.pointerEvents = "none";
-  alert("Oh no!\nHai perso la partita!\nTranquillo, puoi farne un'altra!");
-  header_text.classList.remove("bad");
-  resetGame();
+  endGame("lost", "Oh no! Che Peccato!\nTranquillo, puoi sempre giocarne un'altra!");
 };
+
+function youWin() {
+  endGame("win", "Sei un Grande!!!");
+}
+
+function endGame(outcome, alertMSG) {
+  writeMatch(outcome, Date.now(), difficulty.value);
+  board.style.pointerEvents = "none";
+  alert(alertMSG);
+  header_text.classList.remove("bad");
+  clearInterval(gameTimer);
+  resetGame();
+}
 
 /**
  * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
  */
 const handleClick = (id, inALoop = false) => {
-  cell = virtualCells[id].DOMCell.cellReference;
+  let cell = virtualCells[id].DOMCell.cellReference;
   if (!flaggedCells.includes(id)) {
     if (isABomb(id)) {
       handleReaction("bad");
@@ -352,10 +366,7 @@ function colorCounter(closeCounter) {
  */
 function allBombsFlagged() {
   if (flaggedBombs === n_Bombs && flaggedCells.length === n_Bombs) {
-    alert("hai vinto!");
-    board.style.pointerEvents = "none";
-    // TODO: funzione vittoria
-    // youWin();
+    youWin();
   } else if (flaggedCells.length >= n_Bombs) {
     alert("Hai flaggato qualche casella ancora valida!");
   }
@@ -382,7 +393,7 @@ const highlightBombs = () => {
  * Permette di flaggare e bloccare le celle che si ritiene essere bombe
  */
 const flagCell = (id) => {
-  cell = virtualCells[id].DOMCell.cellReference;
+  let cell = virtualCells[id].DOMCell.cellReference;
   if (!cell.classList.contains("not")) {
     if (!flaggedCells.includes(id)) {
       cell.classList.toggle("flagged");
@@ -398,7 +409,6 @@ const flagCell = (id) => {
       }
     }
   }
-
   setTheUI();
 };
 
@@ -438,6 +448,56 @@ const defineCloseCells = (_id) => {
   theseAreCloseCells = surroundingCells;
   return surroundingCells;
 };
+
+/**
+ * Aggiunge al display dello storico delle partite tutte le partite
+ */
+function printHistory() {
+  let matches = getHistory().matches;
+  historyDisplay.innerHTML = "";
+
+  if (matches.length > 0) {
+    matches.forEach((match) => {
+      const newMatch = document.createElement("div");
+      newMatch.classList.add("singleMatch");
+      const icon = document.createElement("img");
+      if (match.outcome === "win") {
+        icon.src = "./imgs/icons/history/history_check.svg";
+      } else {
+        icon.src = "./imgs/icons/history/history_cross.svg";
+      }
+      const date = document.createElement("span");
+      let data = new Date(match.timestamp);
+      date.innerText = `${data.getDate()}/${
+        data.getMonth() + 1
+      }/${data.getFullYear()}`;
+      const time = document.createElement("span");
+      time.innerText = `${data.getHours().toString().padStart(2, "0")}:${data
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+      const level = document.createElement("span");
+      level.innerText = match.level;
+      newMatch.appendChild(icon);
+      newMatch.appendChild(date);
+      newMatch.appendChild(time);
+      newMatch.appendChild(level);
+      historyDisplay.appendChild(newMatch);
+    });
+  }
+}
+
+function controlHistoryDisplay() {
+    if (historyExist()) {
+      document.querySelector("[for=\"history_display\"").style="display: block;";
+      historyDisplay.style = "display: block;";
+      printHistory();
+    } else {
+      document.querySelector('[for="history_display"').style =
+        "display: none;";
+      historyDisplay.style = "display: none;";
+    }
+}
 
 /**
  * Controlla se le coordinate della cella in esame sia compresa in un determinato range.

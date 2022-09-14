@@ -28,6 +28,7 @@ header img {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.6rem;
   font-size: 1.8rem;
   font-family: "Inria Sans", sans-serif;
@@ -77,6 +78,25 @@ header img {
   border: none;
   border-radius: 5px;
   font-size: 1.2rem;
+}
+.menu .options_wrap .optionGroup #history_display {
+  overflow-y: auto;
+  max-height: 190px;
+}
+.menu .options_wrap .optionGroup #history_display .singleMatch {
+  display: flex;
+  align-items: center;
+}
+.menu .options_wrap .optionGroup #history_display .singleMatch:not(:last-child) {
+  margin-bottom: 0.8rem;
+}
+.menu .options_wrap .optionGroup #history_display .singleMatch img {
+  height: 20px;
+  aspect-ratio: 1;
+  margin-right: 1rem;
+}
+.menu .options_wrap .optionGroup #history_display .singleMatch span {
+  margin-right: 1rem;
 }
 .menu .actions {
   display: flex;
@@ -289,6 +309,4 @@ main {
   justify-content: space-between;
   width: 80%;
   margin-inline: auto;
-}
-
-/*# sourceMappingURL=style.css.map */
+}/*# sourceMappingURL=style.css.map */
