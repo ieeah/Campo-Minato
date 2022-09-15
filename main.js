@@ -67,16 +67,16 @@ let clickedCells = 0;
 let gameTimer = null;
 let seconds = 0;
 let minutes = 0;
-
+let paused = true;
 setTheUI();
 controlHistoryDisplay();
 
 startButton.addEventListener("click", () => {
+  paused = false;
   startGame();
-  startTimer();
 });
 surrenderButton.addEventListener("click", () => {
-  stopTimer();
+  paused = true;
   surrender();
 });
 
@@ -84,16 +84,23 @@ document.getElementById("helpButton").addEventListener("click", () => {
   hint();
 });
 
-/**
- * Funzione che avvia la creazione del campo di gioco e prepara tutti i dati necessari per lo svolgimento del gioco.
- */
+modalContinue.addEventListener("click", () => {
+  closeModal();
+});
+
+modalSurrender.addEventListener("click", () => {
+  closeModal();
+  gameOver();
+});
+
 function startGame() {
   resetGame();
   getDifficultyLevel();
   generateBombsIds();
   setTheUI();
-  controlHistoryDisplay();
   generateBoard();
+  paused = false;
+  startTimer();
 }
 
 function stopTimer() {
@@ -103,8 +110,10 @@ function stopTimer() {
 function startTimer() {
   stopTimer();
   gameTimer = setInterval(() => {
-    seconds++;
-    setTheUI();
+    if (!paused) {
+      seconds++;
+      setTheUI();
+    }
   }, 1000);
 }
 /**
@@ -125,6 +134,7 @@ function resetGame() {
   seconds = 0;
   minutes = 0;
   firstClick = true;
+  paused = true;
   handleReaction("good");
   setTheUI();
 }
@@ -155,7 +165,7 @@ function getDifficultyLevel() {
       break;
 
     case "5":
-      boardSize = 32;
+      boardSize = 30;
       n_Bombs = 120;
   }
 }
@@ -240,34 +250,19 @@ function hint() {
 }
 
 function showModal(message, showRedButton = false) {
-  stopTimer();
+  paused = true;
   modalMessage.innerText = message;
   if (showRedButton) {
     modalSurrender.classList.remove("hidden");
+  } else {
+    modalSurrender.classList.add("hidden");
   }
   modal.classList.remove("hidden");
-  modalContinue.addEventListener("click", () => {
-    closeModal();
-    startTimer();
-  });
-
-  modalSurrender.addEventListener("click", () => {
-    closeModal();
-    gameOver();
-  });
 }
 
 function closeModal() {
   modal.classList.add("hidden");
-  modalContinue.removeEventListener("click", () => {
-    closeModal();
-    startTimer();
-  });
-  modalSurrender.removeEventListener("click", () => {
-    modalSurrender.classList.add("hidden");
-    closeModal();
-    gameOver();
-  });
+  paused = false;
 }
 
 function youWin() {
@@ -276,16 +271,14 @@ function youWin() {
   addMatch("win");
   endGame();
   resetGame();
-  printHistory();
 }
 
 function gameOver() {
   endGame();
   handleReaction("bad");
   highlightBombs();
-  stopTimer();
   addMatch("lost");
-  printHistory();
+  stopTimer();
 }
 
 function endGame() {
@@ -295,6 +288,7 @@ function endGame() {
 function addMatch(outcome) {
   let newTime = timerDisplay.innerText;
   saveMatch(outcome, Date.now(), difficulty.value, newTime);
+  printHistory();
 }
 
 /**
@@ -430,11 +424,13 @@ function allBombsFlagged() {
   if (flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
-    stopTimer();
+    paused = true;
     alert(
       "Hai flaggato qualche casella ancora valida!\nHai 3 secondi per sflaggarne almeno una e continuare a giocare, altrimenti rivedrai questo messaggio"
     );
-    setTimeout(() => {startTimer()}, 3000);
+    setTimeout(() => {
+      paused = false;
+    }, 3000);
   }
 }
 
@@ -578,15 +574,8 @@ function between(ref, toCompare) {
  */
 function surrender() {
   if (firstClick) {
-    stopTimer()
-    alert("Dai inizia a giocare almeno!");
-    startTimer();
+    showModal("Per arrenderti devi prima fare almeno una mossa!", false);
   } else {
-    let arreso = confirm("sicuro?");
-    if(arreso) {
-      gameOver();
-    } else {
-      startTimer();
-    }
+    showModal("Sicuro?", true);
   }
 }
