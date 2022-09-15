@@ -194,7 +194,7 @@ header button#helpButton:hover {
 }
 
 .cell.not {
-  background-color: #9C21BD;
+  background-color: #4d194d;
   cursor: default;
 }
 
@@ -218,6 +218,7 @@ footer {
   text-align: center;
   height: 5vh;
   display: flex;
+  align-items: center;
   width: 80%;
   margin-inline: auto;
   font-weight: 200;

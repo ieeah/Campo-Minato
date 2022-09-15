@@ -37,44 +37,61 @@ export function historyExist() {
  * @param timestamp - Date.now()
  * @param level - "1", "2", "3", "4", or "5"
  */
-export function writeMatch(outcome, timestamp, level) {
+export function saveMatch(outcome, timestamp, level, time) {
+  console.trace("saveMatch called");
   let newHistory = null;
-  let newMatches = [];
 
   const newMatch = {
     outcome: outcome,
     timestamp: timestamp,
     level: level,
+    time: time,
   };
 
   if (historyExist()) {
-    let oldRawHistory = localStorage.getItem("mineSweeper_ieeah_history");
-    let oldParsedHistory = JSON.parse(oldRawHistory);
-    let oldMatches = oldParsedHistory.matches;
+    let oldMatches = JSON.parse(
+      localStorage.getItem("mineSweeper_ieeah_history")
+    ).matches;
 
-    if (oldMatches.length < 10) {
-      oldMatches.unshift(newMatch);
-      newHistory = JSON.stringify({
-        matches: [...oldMatches],
-      });
-    } else {
-      newMatches.unshift(newMatch);
-      let i = 0;
-      while (newMatches.length <= 9) {
-        newMatches.push(oldMatches[i]);
-        i++;
+    console.log({ oldMatches });
+
+    if (oldMatches != null) {
+      if (oldMatches.length < 10) {
+        oldMatches.unshift(newMatch);
+        newHistory = JSON.stringify({
+          matches: [...oldMatches],
+        });
+      } else {
+        let newMatches = [];
+        newMatches.push(newMatch);
+        let i = 0;
+        while (i < 9) {
+          newMatches.push(oldMatches[i]);
+          i++;
+        }
+        newHistory = JSON.stringify({
+          matches: [...newMatches],
+        });
       }
-      newHistory = JSON.stringify({
-        matches: [...newMatches],
-      });
-      newMatches = [];
     }
-    localStorage.removeItem("mineSweeper_ieeah_history");
   } else {
     newHistory = JSON.stringify({
       matches: [newMatch],
     });
   }
 
+  // if(!historyExist()) {
+  //   newHistory = JSON.stringify({matches: [newMatch]});
+  // } else {
+
+  // }
+
   localStorage.setItem("mineSweeper_ieeah_history", newHistory);
+
+}
+
+function getTimeInSeconds(time) {
+  let seconds = parseInt(time.split(":")[1]);
+  let minutes = parseInt(time.split(":")[0]);
+  return seconds + minutes * 60;
 }

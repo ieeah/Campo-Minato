@@ -1,5 +1,5 @@
 // import translations from "./js/translations";
-import { historyExist, getHistory, writeMatch } from "./js/LS.js";
+import { historyExist, getHistory, saveMatch } from "./js/LS.js";
 
 // crea le referenze al DOM per accesso semplificato.
 const board = document.getElementById("boardgame");
@@ -58,16 +58,12 @@ let flaggedBombs = [];
 let remainingBombs = n_Bombs;
 // le celle vicine alla cella cliccata
 let theseAreCloseCells = [];
-
 let firstClick = true;
 // una rappresentazione fittizia di tutte le celle
 let virtualCells = [];
-
-let paused = false;
 let bombs = []; // array di id delle celle che sono bombe
 let usedHelps = 0;
 let clickedCells = 0;
-
 let gameTimer = null;
 let seconds = 0;
 let minutes = 0;
@@ -77,14 +73,10 @@ controlHistoryDisplay();
 
 startButton.addEventListener("click", () => {
   startGame();
-  gameTimer = setInterval(() => {
-    if (!paused) {
-      seconds++;
-      setTheUI();
-    }
-  }, 1000);
+  startTimer();
 });
 surrenderButton.addEventListener("click", () => {
+  stopTimer();
   surrender();
 });
 
@@ -102,6 +94,18 @@ function startGame() {
   setTheUI();
   controlHistoryDisplay();
   generateBoard();
+}
+
+function stopTimer() {
+  clearInterval(gameTimer);
+}
+
+function startTimer() {
+  stopTimer();
+  gameTimer = setInterval(() => {
+    seconds++;
+    setTheUI();
+  }, 1000);
 }
 /**
  * Funzione che resetta tutti i dati di gioco e azzera l'interfaccia.
@@ -121,8 +125,8 @@ function resetGame() {
   seconds = 0;
   minutes = 0;
   firstClick = true;
+  handleReaction("good");
   setTheUI();
-  controlHistoryDisplay();
 }
 
 /**
@@ -210,90 +214,93 @@ function generateBoard() {
   board.style.pointerEvents = "all";
 }
 
-/**
- * Manda un alert di sconfitta al giocatore, chiama la funzione highlightBombs() e disattiva tutti i click sulla tavola di gioco.
- */
-function gameOver() {
-  highlightBombs();
-  endGame("lost");
-  clearInterval(gameTimer);
-}
-
 function hint() {
-  if (firstClick === false && usedHelps < 1) {
-    let index = Math.floor(Math.random() * bombs.length);
-    if (!flaggedBombs.includes(bombs[index])) {
-      flagCell(bombs[index]);
-      usedHelps++;
-    } else {
-      hint();
-    }
+  if (firstClick) {
+    showModal("Devi iniziare la partita per poter utilizzare un aiuto!");
+    return null;
+  }
+  if (flaggedCells.length > bombs.length - 2) {
+    showModal(
+      "Non puoi usare gli aiuti per trovare l'ultima bomba, bel tentativo!"
+    );
+    return null;
+  }
+  if (usedHelps > 0) {
+    showModal("Hai già utilizzato un aiuto in questa partita!");
+    return null;
+  }
+
+  let index = Math.floor(Math.random() * bombs.length);
+  if (!flaggedBombs.includes(bombs[index])) {
+    flagCell(bombs[index]);
+    usedHelps++;
   } else {
-    showModal("hints");
+    hint();
   }
 }
 
-function showModal(outcome) {
-  switch (outcome) {
-    case "win":
-      modalMessage.innerText =
-        "Grande!\nHai vinto! pronto per la prossima partita?";
-      break;
-    case "surrender":
-      modalMessage.innerText =
-        "Sicuro di volerti arrendere?\nLa partita verrà salvata come persa!";
-      break;
-    case "hints":
-      modalMessage.innerText =
-        "Hai già usato un aiuto, oppure devi ancora iniziare la partita!";
-      break;
-    default:
-      modalMessage.innerText = "Oh no che peccato!\nVuoi la rivincita?";
-      break;
-  }
-  modal.classList.remove("hidden");
-  if (outcome === "surrender") {
+function showModal(message, showRedButton = false) {
+  stopTimer();
+  modalMessage.innerText = message;
+  if (showRedButton) {
     modalSurrender.classList.remove("hidden");
   }
+  modal.classList.remove("hidden");
   modalContinue.addEventListener("click", () => {
     closeModal();
+    startTimer();
   });
 
   modalSurrender.addEventListener("click", () => {
-    clearInterval(gameTimer);
     closeModal();
-    modalSurrender.classList.add("hidden");
-    endGameNoModal("lost");
+    gameOver();
   });
 }
 
 function closeModal() {
   modal.classList.add("hidden");
+  modalContinue.removeEventListener("click", () => {
+    closeModal();
+    startTimer();
+  });
+  modalSurrender.removeEventListener("click", () => {
+    modalSurrender.classList.add("hidden");
+    closeModal();
+    gameOver();
+  });
 }
 
 function youWin() {
-  clearInterval(gameTimer);
-  endGame("win");
+  showModal("Grande! Hai vinto!\nFacciamo un'altra partita?");
+  stopTimer();
+  addMatch("win");
+  endGame();
+  resetGame();
+  printHistory();
 }
 
-function endGame(outcome) {
-  writeMatch(outcome, Date.now(), difficulty.value);
-  board.style.pointerEvents = "none";
-  showModal(outcome);
-  header_text.classList.remove("bad");
+function gameOver() {
+  endGame();
+  handleReaction("bad");
+  highlightBombs();
+  stopTimer();
+  addMatch("lost");
+  printHistory();
 }
 
-function endGameNoModal(outcome) {
-  writeMatch(outcome, Date.now(), difficulty.value);
+function endGame() {
   board.style.pointerEvents = "none";
-  header_text.classList.remove("bad");
+}
+
+function addMatch(outcome) {
+  let newTime = timerDisplay.innerText;
+  saveMatch(outcome, Date.now(), difficulty.value, newTime);
 }
 
 /**
  * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
  */
 function handleClick(id) {
-  // logData();
   if (firstClick) {
     if (isABomb(id)) {
       generateBombsIds();
@@ -304,7 +311,6 @@ function handleClick(id) {
   let cell = virtualCells[id].DOMCell.cellReference;
   if (!flaggedCells.includes(id)) {
     if (isABomb(id)) {
-      handleReaction("bad");
       gameOver();
     } else if (!virtualCells[id].clicked) {
       clickedCells++;
@@ -424,13 +430,11 @@ function allBombsFlagged() {
   if (flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
-    paused = true;
+    stopTimer();
     alert(
       "Hai flaggato qualche casella ancora valida!\nHai 3 secondi per sflaggarne almeno una e continuare a giocare, altrimenti rivedrai questo messaggio"
     );
-    setTimeout(() => {
-      paused = false;
-    }, 3000);
+    setTimeout(() => {startTimer()}, 3000);
   }
 }
 
@@ -516,45 +520,44 @@ function defineCloseCells(_id) {
  * Aggiunge al display dello storico delle partite tutte le partite
  */
 function printHistory() {
-  let matches = getHistory().matches;
-  historyDisplay.innerHTML = "";
+  if (historyExist()) {
+    let matches = getHistory().matches;
+    historyDisplay.innerHTML = "";
 
-  if (matches.length > 0) {
-    matches.forEach((match) => {
-      const newMatch = document.createElement("div");
-      newMatch.classList.add("singleMatch");
-      const icon = document.createElement("img");
-      if (match.outcome === "win") {
-        icon.src = "./imgs/icons/history/history_check.svg";
-      } else {
-        icon.src = "./imgs/icons/history/history_cross.svg";
-      }
-      const date = document.createElement("span");
-      let data = new Date(match.timestamp);
-      date.innerText = `${data.getDate()}/${
-        data.getMonth() + 1
-      }/${data.getFullYear()}`;
-      const time = document.createElement("span");
-      time.innerText = `${data.getHours().toString().padStart(2, "0")}:${data
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`;
-      const level = document.createElement("span");
-      level.innerText = match.level;
-      newMatch.appendChild(icon);
-      newMatch.appendChild(date);
-      newMatch.appendChild(time);
-      newMatch.appendChild(level);
-      historyDisplay.appendChild(newMatch);
-    });
+    if (matches.length > 0) {
+      matches.forEach((match) => {
+        const newMatch = document.createElement("div");
+        newMatch.classList.add("singleMatch");
+        const icon = document.createElement("img");
+        if (match.outcome === "win") {
+          icon.src = "./imgs/icons/history/history_check.svg";
+        } else {
+          icon.src = "./imgs/icons/history/history_cross.svg";
+        }
+        const date = document.createElement("span");
+        let data = new Date(match.timestamp);
+        date.innerText = `${data.getDate()}/${
+          data.getMonth() + 1
+        }/${data.getFullYear()}`;
+        const time = document.createElement("span");
+        time.innerText = match.time;
+        const level = document.createElement("span");
+        level.innerText = match.level;
+        newMatch.appendChild(icon);
+        newMatch.appendChild(date);
+        newMatch.appendChild(time);
+        newMatch.appendChild(level);
+        historyDisplay.appendChild(newMatch);
+      });
+    }
   }
 }
 
 function controlHistoryDisplay() {
   if (historyExist()) {
+    printHistory();
     document.querySelector('[for="history_display"').style = "display: block;";
     historyDisplay.style = "display: block;";
-    printHistory();
   } else {
     document.querySelector('[for="history_display"').style = "display: none;";
     historyDisplay.style = "display: none;";
@@ -574,5 +577,16 @@ function between(ref, toCompare) {
  * Se il gioco non è stato avviato manda un alert, altrimenti chiede conferma sul voler abbandonare il gioco e stoppa l'esecuzione.
  */
 function surrender() {
-  endGame("surrender");
+  if (firstClick) {
+    stopTimer()
+    alert("Dai inizia a giocare almeno!");
+    startTimer();
+  } else {
+    let arreso = confirm("sicuro?");
+    if(arreso) {
+      gameOver();
+    } else {
+      startTimer();
+    }
+  }
 }

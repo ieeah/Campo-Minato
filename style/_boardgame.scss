@@ -26,9 +26,6 @@
   place-content: center;
   cursor: pointer;
   font-size: 1.2rem;
-  // font-weight: bold;
-  // width: 50px;
-  // aspect-ratio: 1;
 }
 
 .cell.over {
@@ -51,7 +48,8 @@
 }
 
 .cell.not {
-  background-color: $bg-color-secondary;
+  // background-color: $bg-color-secondary;
+  background-color: $bg-color-dark;
   cursor: default;
 }
 
