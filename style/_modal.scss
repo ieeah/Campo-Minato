@@ -1,0 +1,74 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .3s;
+
+  .overlay {
+    width: 100%;
+    height: 100%;
+    background-color: rgba($bg-color-dark, .3);
+    position: absolute;
+    inset: 0;
+  }
+
+  .modal_show {
+    width: 700px;
+    height: 350px;
+    border-radius: 15px;
+    background-color: $bg-color-dark;
+    box-shadow:
+      inset 0 0 10px $color-deny,
+      inset 0 0 18px $bg-color-secondary,
+      inset 0 0 25px $bg-color-dark;
+    z-index: 2;
+    padding: 1.5rem;
+
+    .modal_message {
+      padding: 1.5rem;
+      width: 100%;
+      height: 80%;
+      color: $clear;
+      font-size: 1.75rem;
+    }
+
+    .actions {
+      height: 20%;
+      display: flex;
+      justify-content: end;
+      align-items: center;
+      padding-right: .7rem;
+
+      .modal_button {
+        padding: .5rem 2rem;
+        margin-left: 1rem;
+        color: $clear;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        cursor: pointer;
+        position: relative;
+
+        &.surrender {
+          background-color: rgba($color: $color-deny, $alpha: .5);
+
+          &:hover {
+            background-color: rgba($color: $color-deny, $alpha: 1);
+          }
+        }
+
+        &.continue {
+          background-color: $accent;
+          &:hover {
+            filter: brightness(85%);
+          }
+        }
+      }
+    }
+  }
+}

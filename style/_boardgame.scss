@@ -1,0 +1,70 @@
+#boardgame {
+  height: 85vh;
+  width: 75%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+#boardgame.over {
+  pointer-events: none;
+}
+
+#boardgame .start_message {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+// cells
+
+.cell {
+  background-color: rgba($color: $color-primary, $alpha: .3);
+  border: 1px solid $color-secondary;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.cell.over {
+  pointer-events: none;
+}
+
+.cell:hover {
+  filter: brightness(200%);
+}
+
+.cell.bomb {
+  background-color: $bomb;
+  color: $shadow;
+  pointer-events: none;
+  font-size: 2rem;
+  background-image: url("./imgs/icons/cells_icons/bomb.svg");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.cell.not {
+  // background-color: $bg-color-secondary;
+  background-color: $bg-color-dark;
+  cursor: default;
+}
+
+.cell.not:hover {
+  filter: brightness(100%);
+}
+
+.cell.flagged {
+  background-color: rgba($color: $accent, $alpha: .7);
+  background-image: url('./imgs/icons/cells_icons/flag.svg');
+  background-size: 50%;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.cell.flagged:hover {
+  filter: brightness(110%);
+}

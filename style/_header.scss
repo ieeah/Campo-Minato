@@ -1,0 +1,35 @@
+@import './vars';
+
+header {
+  width: 80%;
+  margin-inline: auto;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-block: .5rem;
+  h1 {
+    text-align: right;
+    font-size: 2.5rem;
+    color: $accent;
+    font-family: $font-primary;
+  }
+  img {
+    height: 100%;
+    margin-left: 1.5rem;
+  }
+  button#helpButton {
+    background-color:rgba($color: $accent, $alpha: .6);
+    border: none;
+    border-radius: $px5;
+    padding: .4rem .7rem;
+    margin-right: 1.5rem;
+    font-weight: bold;
+    color: $dark;
+    cursor: pointer;
+    text-decoration: underline;
+    transition:cubic-bezier(0.6, 0.04, 0.98, 0.335) .15s;
+    &:hover {
+      background-color: $accent;
+    }
+  }
+}
