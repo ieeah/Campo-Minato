@@ -1,5 +1,5 @@
 ![](https://img.shields.io/badge/developing-spare%20time-yellow)
-![](https://img.shields.io/badge/version-0.8.5-success)
+![](https://img.shields.io/badge/version-0.9.0-success)
 
 # MineSweeper aka "Campo Minato" in italian
 
