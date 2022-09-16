@@ -65,6 +65,8 @@ let flaggedBombs = [];
 let remainingBombs = n_Bombs;
 // le celle vicine alla cella cliccata
 let theseAreCloseCells = [];
+let clickedArrayCells = [];
+let closeBombsCounter = null;
 let firstClick = true;
 // una rappresentazione fittizia di tutte le celle
 let virtualCells = [];
@@ -93,7 +95,7 @@ helpButton.addEventListener("click", () => {
 
 mutedButton.addEventListener("click", () => {
   toggleAudio();
-})
+});
 
 modalContinue.addEventListener("click", () => {
   closeModal();
@@ -213,7 +215,7 @@ function generateBoard() {
       const cellId = parseInt(j);
       // click normale, si setta la cella cliccata e si controlla che sia o meno una bomba
       cell.addEventListener("click", () => {
-        handleClick(cellId);
+        handleClick(cellId, false);
       });
 
       //click tasto dx, si avvia la funzione per il flaggin della cella clicclata
@@ -307,7 +309,8 @@ function addMatch(outcome) {
 /**
  * Al click su una cella avvia tutte le funzioni per lo svolgimento del gioco.
  */
-function handleClick(id) {
+function handleClick(id, isLoop = false) {
+  // se la prima cella cliccata è una bomba, genera delle nuove bombe e ripete il click
   if (firstClick) {
     if (isABomb(id)) {
       generateBombsIds();
@@ -315,16 +318,21 @@ function handleClick(id) {
     }
     firstClick = false;
   }
+
   let cell = virtualCells[id].DOMCell.cellReference;
   if (!flaggedCells.includes(id)) {
     if (isABomb(id)) {
       gameOver();
-    } else if (!virtualCells[id].clicked) {
+      return null;
+    }
+    if (!virtualCells[id].clicked) {
+      defineCloseCells(id);
+      countCloseBombs();
       clickedCells++;
       virtualCells[id].clicked = true;
+      virtualCells[id].closeCells = [...theseAreCloseCells];
+      virtualCells[id].closeBombs = closeBombsCounter;
       handleReaction("good");
-      defineCloseCells(id);
-      let closeBombsCounter = countCloseBombs();
       if (closeBombsCounter === 0) {
         cell.classList.add("not");
         checkSurroundingCells(id);
@@ -335,7 +343,31 @@ function handleClick(id) {
       playAudio(audioClick);
       cell.classList.add("not");
       setTheUI();
+    } else if (!isLoop) {
+      openCloseCells(id);
     }
+  }
+}
+
+function openCloseCells(id) {
+  const closeCells = virtualCells[id].closeCells;
+  const closeBombs = virtualCells[id].closeBombs;
+  let openedCells = [];
+  let closeFlaggedCells = [];
+  closeCells.forEach((cell) => {
+    if (virtualCells[cell.id].clicked) {
+      openedCells.push(cell);
+    } else if (virtualCells[cell.id].flagged) {
+      closeFlaggedCells.push(cell);
+    }
+  });
+  if (
+    closeFlaggedCells.length === closeBombs &&
+    openedCells.length + closeFlaggedCells.length < closeCells.length
+  ) {
+    closeCells.forEach((closeCell) => {
+      handleClick(closeCell.id, true);
+    });
   }
 }
 function handleReaction(type) {
@@ -371,7 +403,7 @@ function handleReaction(type) {
  */
 function checkSurroundingCells(_id) {
   theseAreCloseCells.forEach((cell) => {
-    handleClick(cell.id);
+    handleClick(cell.id, true);
   });
 }
 
@@ -434,7 +466,10 @@ function colorCounter(closeCounter) {
  * Verifica che tutte le celle flaggate siano effettivamente delle bombe, e determina se si è vinto la partita o se si è flaggata qualche cella che non sia una bomba.
  */
 function allBombsFlagged() {
-  if ((flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) || (clickedCells === Math.pow(boardSize, 2) - n_Bombs)) {
+  if (
+    (flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) ||
+    clickedCells === Math.pow(boardSize, 2) - n_Bombs
+  ) {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
     paused = true;
@@ -471,21 +506,22 @@ function highlightBombs() {
  */
 function flagCell(id) {
   let cell = virtualCells[id].DOMCell.cellReference;
-  if (!cell.classList.contains("not")) {
+  if (!virtualCells[id].clicked) {
     if (!flaggedCells.includes(id)) {
       playAudio(audioFlag);
-      cell.classList.toggle("flagged");
       flaggedCells.push(id);
+      virtualCells[id].flagged = true;
       if (bombs.includes(id)) {
         flaggedBombs.push(id);
       }
     } else {
       flaggedCells.splice(flaggedCells.indexOf(id), 1);
-      cell.classList.toggle("flagged");
+      virtualCells[id].flagged = false;
       if (bombs.includes(id)) {
         flaggedBombs.splice(flaggedBombs.indexOf(id), 1);
       }
     }
+    cell.classList.toggle("flagged");
   }
   setTheUI();
 }
@@ -500,7 +536,7 @@ function countCloseBombs() {
       counter++;
     }
   });
-  return counter;
+  closeBombsCounter = counter;
 }
 
 /**
@@ -595,7 +631,7 @@ function surrender() {
 }
 
 function playAudio(audio) {
-  if(!audioMuted) {
+  if (!audioMuted) {
     audio.pause();
     audio.currentTime = 0;
     audio.play();
