@@ -38,7 +38,6 @@ export function historyExist() {
  * @param level - "1", "2", "3", "4", or "5"
  */
 export function saveMatch(outcome, timestamp, level, time) {
-  console.trace("saveMatch called");
   let newHistory = null;
 
   const newMatch = {
@@ -52,8 +51,6 @@ export function saveMatch(outcome, timestamp, level, time) {
     let oldMatches = JSON.parse(
       localStorage.getItem("mineSweeper_ieeah_history")
     ).matches;
-
-    console.log({ oldMatches });
 
     if (oldMatches != null) {
       if (oldMatches.length < 10) {
@@ -79,19 +76,5 @@ export function saveMatch(outcome, timestamp, level, time) {
       matches: [newMatch],
     });
   }
-
-  // if(!historyExist()) {
-  //   newHistory = JSON.stringify({matches: [newMatch]});
-  // } else {
-
-  // }
-
   localStorage.setItem("mineSweeper_ieeah_history", newHistory);
-
-}
-
-function getTimeInSeconds(time) {
-  let seconds = parseInt(time.split(":")[1]);
-  let minutes = parseInt(time.split(":")[0]);
-  return seconds + minutes * 60;
 }
