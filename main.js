@@ -148,6 +148,7 @@ function resetGame() {
   minutes = 0;
   firstClick = true;
   paused = true;
+  usedHelps = 0;
   handleReaction("good");
   setTheUI();
 }
@@ -352,18 +353,18 @@ function handleClick(id, isLoop = false) {
 function openCloseCells(id) {
   const closeCells = virtualCells[id].closeCells;
   const closeBombs = virtualCells[id].closeBombs;
-  let openedCells = [];
-  let closeFlaggedCells = [];
+  let openedCells = 0;
+  let closeFlaggedCells = 0;
   closeCells.forEach((cell) => {
     if (virtualCells[cell.id].clicked) {
-      openedCells.push(cell);
+      openedCells++;
     } else if (virtualCells[cell.id].flagged) {
-      closeFlaggedCells.push(cell);
+      closeFlaggedCells++;
     }
   });
   if (
-    closeFlaggedCells.length === closeBombs &&
-    openedCells.length + closeFlaggedCells.length < closeCells.length
+    closeFlaggedCells >= closeBombs &&
+    openedCells + closeFlaggedCells < closeCells.length
   ) {
     closeCells.forEach((closeCell) => {
       handleClick(closeCell.id, true);
@@ -448,7 +449,7 @@ function colorCounter(closeCounter) {
       return "#ff8438";
       break;
     case 5:
-      return "#0011ff";
+      return "#e2f425";
       break;
     case 6:
       return "#5b00a1";

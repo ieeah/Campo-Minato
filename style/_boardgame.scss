@@ -48,8 +48,7 @@
 }
 
 .cell.not {
-  // background-color: $bg-color-secondary;
-  background-color: $bg-color-dark;
+  background-color: rgba($color: $dark, $alpha: .3);
   cursor: default;
 }
 

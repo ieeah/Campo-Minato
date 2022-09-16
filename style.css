@@ -202,7 +202,7 @@ header button.muted:hover {
 }
 
 .cell.not {
-  background-color: #4d194d;
+  background-color: rgba(0, 18, 32, 0.3);
   cursor: default;
 }
 
@@ -319,7 +319,7 @@ body {
   display: flex;
   flex-direction: column;
   font-family: "Inconsolata", monospace;
-  background-color: #7420d5;
+  background-color: #001220;
   color: white;
   background-image: url("./imgs/BG.svg");
   background-size: cover;
