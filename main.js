@@ -16,6 +16,13 @@ const header_text = document.getElementById("reactions_text");
 const header_icon = document.getElementById("reactions_icon");
 const clickedCellsDisplay = document.getElementById("clickedCellsDisplay");
 const historyDisplay = document.getElementById("history_display");
+const helpButton = document.getElementById("helpButton");
+const mutedButton = document.getElementById("mutedButton");
+const audioClick = document.getElementById("audio_click");
+const audioLost = document.getElementById("audio_lost");
+const audioWon = document.getElementById("audio_won");
+const audioFlag = document.getElementById("audio_flag");
+let audioMuted = false;
 const icons = {
   reactions: [
     ["bad_cry", "bad_emb", "end_cross"],
@@ -80,9 +87,13 @@ surrenderButton.addEventListener("click", () => {
   surrender();
 });
 
-document.getElementById("helpButton").addEventListener("click", () => {
+helpButton.addEventListener("click", () => {
   hint();
 });
+
+mutedButton.addEventListener("click", () => {
+  toggleAudio();
+})
 
 modalContinue.addEventListener("click", () => {
   closeModal();
@@ -165,7 +176,7 @@ function getDifficultyLevel() {
       break;
 
     case "5":
-      boardSize = 30;
+      boardSize = 28;
       n_Bombs = 120;
   }
 }
@@ -266,6 +277,7 @@ function closeModal() {
 }
 
 function youWin() {
+  playAudio(audioWon);
   showModal("Grande! Hai vinto!\nFacciamo un'altra partita?");
   stopTimer();
   addMatch("win");
@@ -274,6 +286,7 @@ function youWin() {
 }
 
 function gameOver() {
+  playAudio(audioLost);
   endGame();
   handleReaction("bad");
   highlightBombs();
@@ -319,7 +332,7 @@ function handleClick(id) {
         cell.innerText = closeBombsCounter;
         cell.style.color = colorCounter(closeBombsCounter);
       }
-
+      playAudio(audioClick);
       cell.classList.add("not");
       setTheUI();
     }
@@ -421,7 +434,7 @@ function colorCounter(closeCounter) {
  * Verifica che tutte le celle flaggate siano effettivamente delle bombe, e determina se si è vinto la partita o se si è flaggata qualche cella che non sia una bomba.
  */
 function allBombsFlagged() {
-  if (flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) {
+  if ((flaggedBombs.length === n_Bombs && flaggedCells.length === n_Bombs) || (clickedCells === Math.pow(boardSize, 2) - n_Bombs)) {
     youWin();
   } else if (flaggedCells.length >= n_Bombs) {
     paused = true;
@@ -460,6 +473,7 @@ function flagCell(id) {
   let cell = virtualCells[id].DOMCell.cellReference;
   if (!cell.classList.contains("not")) {
     if (!flaggedCells.includes(id)) {
+      playAudio(audioFlag);
       cell.classList.toggle("flagged");
       flaggedCells.push(id);
       if (bombs.includes(id)) {
@@ -578,4 +592,19 @@ function surrender() {
   } else {
     showModal("Sicuro?", true);
   }
+}
+
+function playAudio(audio) {
+  if(!audioMuted) {
+    audio.pause();
+    audio.currentTime = 0;
+    audio.play();
+  }
+}
+
+function toggleAudio() {
+  mutedButton.classList.toggle("muted");
+  mutedButton.classList.toggle("active");
+  mutedButton.innerText = mutedButton.innerText === "Audio" ? "Muted" : "Audio";
+  audioMuted = !audioMuted;
 }

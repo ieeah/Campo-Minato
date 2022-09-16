@@ -21,7 +21,8 @@
   </head>
   <body>
     <header>
-      <button id="helpButton">Help!</button>
+      <button id="mutedButton" class="active">Audio</button>
+      <button id="helpButton" class="active">Help!</button>
       <h1>Mine Sweeper</h1>
       <img src="./imgs/icons/cells_icons/bomb.svg" alt="" />
     </header>
@@ -111,7 +112,10 @@
         </div>
       </div>
     </div>
-
+    <audio id="audio_click" src="./audio/click.mp3"></audio>
+    <audio id="audio_flag" src="./audio/flag.mp3"></audio>
+    <audio id="audio_lost" src="./audio/lost.mp3"></audio>
+    <audio id="audio_won" src="./audio/win.mp3"></audio>
     <script type="module" src="main.js"></script>
   </body>
 </html>
