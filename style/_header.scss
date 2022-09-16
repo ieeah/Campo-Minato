@@ -17,19 +17,27 @@ header {
     height: 100%;
     margin-left: 1.5rem;
   }
-  button#helpButton {
-    background-color:rgba($color: $accent, $alpha: .6);
+  button {
     border: none;
-    border-radius: $px5;
-    padding: .4rem .7rem;
-    margin-right: 1.5rem;
-    font-weight: bold;
-    color: $dark;
-    cursor: pointer;
-    text-decoration: underline;
-    transition:cubic-bezier(0.6, 0.04, 0.98, 0.335) .15s;
+      border-radius: $px5;
+      padding: .4rem .7rem;
+      margin-right: 1.5rem;
+      font-weight: bold;
+      color: $dark;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: cubic-bezier(0.6, 0.04, 0.98, 0.335) .15s;
+  }
+  button.active {
+    background-color:rgba($color: $accent, $alpha: .6);
     &:hover {
       background-color: $accent;
+    }
+  }
+  button.muted {
+    background-color: rgba($color: $color-deny, $alpha: .6);
+    &:hover {
+      background-color: $color-deny;
     }
   }
 }
