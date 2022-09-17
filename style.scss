@@ -6,7 +6,9 @@
 @import './style/modal';
 
 // reset
-
+:root {
+  transition: all .8s ease-in;
+}
 *,
 *::before,
 *::after {
@@ -18,9 +20,9 @@
 body {
   display: flex;
   flex-direction: column;
-  font-family: $font-secondary;
-  background-color: $dark;
-  color: $clear;
+  font-family: var(--font-secondary);
+  background-color: var(--body-bg);
+  color: var(--text-color);
   background-image: url('./imgs/BG.svg');
   background-size: cover;
   background-repeat: no-repeat;

@@ -1,5 +1,73 @@
 @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400&family=Inria+Sans:ital,wght@0,700;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400&family=Inria+Sans:ital,wght@0,700;1,700&display=swap");
+:root {
+  --bomb: rgb(239, 71, 111);
+  --shadow: rgb(27, 58, 75);
+  --text-color: rgb(255, 255, 255);
+  --body-bg: rgb(0, 18, 32);
+  --black: rgb(0, 0, 0);
+  --accent: rgb(52, 193, 106);
+  --bg-color: #7420d5;
+  --bg-color-secondary: #9C21BD;
+  --bg-color-dark: rgb(77, 25, 77);
+  --modal-overlay-bg: rgba(77, 25, 77, .45);
+  --color-primary: rgb(0, 148, 209);
+  --color-secondary: #9bd9e8;
+  --color-deny: rgb(236, 34, 81);
+  --option-bg-color: rgba(0, 148, 209, .55);
+  --cells-bg-def: rgba(0, 148, 209, .2);
+  --cells-bg-not: rgba(77, 25, 77, .7);
+  --cells-bg-flag: rgba(52, 193, 106, .75);
+  --button-active-bg: rgba(52, 193, 106, .8);
+  --button-muted-bg: rgba(236, 34, 81, .8);
+  --cells-color-1:
+  --fz-10: 1rem;
+  --fz-12: 1.2rem;
+  --fz-14: 1.4rem;
+  --fz-16: 1.6rem;
+  --font-primary: "Inria Sans", sans-serif;
+  --font-secondary: "Inconsolata", monospace;
+  --px5: 5px;
+}
+:root.light {
+  --text-color: #001220;
+  --body-bg: white;
+}
+
+:root {
+  --bomb: rgb(239, 71, 111);
+  --shadow: rgb(27, 58, 75);
+  --text-color: rgb(255, 255, 255);
+  --body-bg: rgb(0, 18, 32);
+  --black: rgb(0, 0, 0);
+  --accent: rgb(52, 193, 106);
+  --bg-color: #7420d5;
+  --bg-color-secondary: #9C21BD;
+  --bg-color-dark: rgb(77, 25, 77);
+  --modal-overlay-bg: rgba(77, 25, 77, .45);
+  --color-primary: rgb(0, 148, 209);
+  --color-secondary: #9bd9e8;
+  --color-deny: rgb(236, 34, 81);
+  --option-bg-color: rgba(0, 148, 209, .55);
+  --cells-bg-def: rgba(0, 148, 209, .2);
+  --cells-bg-not: rgba(77, 25, 77, .7);
+  --cells-bg-flag: rgba(52, 193, 106, .75);
+  --button-active-bg: rgba(52, 193, 106, .8);
+  --button-muted-bg: rgba(236, 34, 81, .8);
+  --cells-color-1:
+  --fz-10: 1rem;
+  --fz-12: 1.2rem;
+  --fz-14: 1.4rem;
+  --fz-16: 1.6rem;
+  --font-primary: "Inria Sans", sans-serif;
+  --font-secondary: "Inconsolata", monospace;
+  --px5: 5px;
+}
+:root.light {
+  --text-color: #001220;
+  --body-bg: white;
+}
+
 header {
   width: 80%;
   margin-inline: auto;
@@ -11,8 +79,8 @@ header {
 header h1 {
   text-align: right;
   font-size: 2.5rem;
-  color: #34c16a;
-  font-family: "Inria Sans", sans-serif;
+  color: var(--accent);
+  font-family: var(--font-primary);
 }
 header img {
   height: 100%;
@@ -20,26 +88,26 @@ header img {
 }
 header button {
   border: none;
-  border-radius: 5px;
+  border-radius: var(--px5);
   padding: 0.4rem 0.7rem;
   margin-right: 1.5rem;
   font-weight: bold;
-  color: #001220;
+  color: var(--text-color);
   cursor: pointer;
   text-decoration: underline;
   transition: cubic-bezier(0.6, 0.04, 0.98, 0.335) 0.15s;
 }
 header button.active {
-  background-color: rgba(52, 193, 106, 0.6);
+  background-color: var(--button-active-bg);
 }
 header button.active:hover {
-  background-color: #34c16a;
+  background-color: var(--accent);
 }
 header button.muted {
-  background-color: rgba(236, 34, 81, 0.6);
+  background-color: var(--button-muted-bg);
 }
 header button.muted:hover {
-  background-color: #ec2251;
+  background-color: var(--color-deny);
 }
 
 .menu {
@@ -52,13 +120,13 @@ header button.muted:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.6rem;
+  margin-bottom: var(--fz-16);
   font-size: 1.8rem;
-  font-family: "Inria Sans", sans-serif;
-  color: #34c16a;
+  font-family: var(--font-primary);
+  color: var(--accent);
 }
 .menu .reactions #reactions_text.bad {
-  color: #ec2251;
+  color: var(--color-deny);
 }
 .menu .reactions #icon {
   width: 20%;
@@ -87,20 +155,20 @@ header button.muted:hover {
   margin-bottom: 1rem;
 }
 .menu .options_wrap .optionGroup .singleOption .display_container {
-  background-color: rgba(0, 148, 209, 0.55);
-  border-radius: 5px;
+  background-color: var(--option-bg-color);
+  border-radius: var(--px5);
   padding: 0.8rem 1rem;
   display: flex;
   align-items: center;
 }
 .menu .options_wrap .optionGroup select {
   width: 100%;
-  background-color: rgba(0, 148, 209, 0.55);
-  color: white;
+  background-color: var(--option-bg-color);
+  color: var(--text-color);
   padding: 0.8rem 1rem;
   border: none;
-  border-radius: 5px;
-  font-size: 1.2rem;
+  border-radius: var(--px5);
+  font-size: var(--fz-12);
 }
 .menu .options_wrap .optionGroup #history_display {
   overflow-y: auto;
@@ -126,13 +194,13 @@ header button.muted:hover {
 }
 .menu .actions button {
   padding: 0.35rem;
-  color: white;
-  font-size: 1.2rem;
+  color: var(--text-color);
+  font-size: var(--fz-12);
   text-transform: capitalize;
-  border-radius: 5px;
+  border-radius: var(--px5);
   border: none;
   cursor: pointer;
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--fz-12);
   transition: all 0.2s ease-out;
   display: grid;
   place-content: center;
@@ -144,11 +212,11 @@ header button.muted:hover {
 .menu .actions button.start {
   width: 55%;
   margin-right: 1rem;
-  background-color: #34c16a;
+  background-color: var(--accent);
 }
 .menu .actions button.surrender {
   width: 45%;
-  background-color: #9bd9e8;
+  background-color: var(--color-secondary);
 }
 .menu .actions button:hover {
   opacity: 0.7;
@@ -174,12 +242,13 @@ header button.muted:hover {
 }
 
 .cell {
-  background-color: rgba(0, 148, 209, 0.3);
-  border: 1px solid #9bd9e8;
+  background-color: var(--cells-bg-def);
+  border: 1px solid var(--color-secondary);
   display: grid;
   place-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: clamp(1.2rem, 1vw, 2rem);
+  font-weight: bold;
 }
 
 .cell.over {
@@ -187,12 +256,12 @@ header button.muted:hover {
 }
 
 .cell:hover {
-  filter: brightness(200%);
+  background-color: transparent;
 }
 
 .cell.bomb {
-  background-color: #ef476f;
-  color: #1b3a4b;
+  background-color: var(--bomb);
+  color: var(--shadow);
   pointer-events: none;
   font-size: 2rem;
   background-image: url("./imgs/icons/cells_icons/bomb.svg");
@@ -202,16 +271,12 @@ header button.muted:hover {
 }
 
 .cell.not {
-  background-color: rgba(0, 18, 32, 0.3);
+  background-color: var(--cells-bg-not);
   cursor: default;
 }
 
-.cell.not:hover {
-  filter: brightness(100%);
-}
-
 .cell.flagged {
-  background-color: rgba(52, 193, 106, 0.7);
+  background-color: var(--cells-bg-flag);
   background-image: url("./imgs/icons/cells_icons/flag.svg");
   background-size: 50%;
   background-position: center center;
@@ -219,7 +284,7 @@ header button.muted:hover {
 }
 
 .cell.flagged:hover {
-  filter: brightness(110%);
+  filter: brightness(120%);
 }
 
 footer {
@@ -230,15 +295,17 @@ footer {
   width: 80%;
   margin-inline: auto;
   font-weight: 200;
+  color: white;
 }
 footer a {
   color: white;
   transition: all 0.35s ease-in;
-  margin-left: 0.7rem;
+  font-weight: normal;
+  padding-left: 0.2rem;
 }
 footer a:hover {
-  background-color: #ef476f;
-  padding: 0.7rem;
+  background-color: var(--bomb);
+  padding: 0.3rem 0.7rem 0.3rem 0.2rem;
   border-radius: 4px;
   margin-left: 0;
 }
@@ -256,7 +323,7 @@ footer a:hover {
 .modal .overlay {
   width: 100%;
   height: 100%;
-  background-color: rgba(77, 25, 77, 0.3);
+  background-color: var(--modal-overlay-bg);
   position: absolute;
   inset: 0;
 }
@@ -264,8 +331,8 @@ footer a:hover {
   width: 700px;
   height: 350px;
   border-radius: 15px;
-  background-color: #4d194d;
-  box-shadow: inset 0 0 10px #ec2251, inset 0 0 18px #9C21BD, inset 0 0 25px #4d194d;
+  background-color: var(--body-bg);
+  box-shadow: inset 0 0 10px var(--color-deny), inset 0 0 18px var(--bg-color-secondary), inset 0 0 25px var(--bg-color-dark);
   z-index: 2;
   padding: 1.5rem;
 }
@@ -273,7 +340,7 @@ footer a:hover {
   padding: 1.5rem;
   width: 100%;
   height: 80%;
-  color: white;
+  color: var(--text-color);
   font-size: 1.75rem;
 }
 .modal .modal_show .actions {
@@ -286,7 +353,7 @@ footer a:hover {
 .modal .modal_show .actions .modal_button {
   padding: 0.5rem 2rem;
   margin-left: 1rem;
-  color: white;
+  color: var(--text-color);
   border: none;
   border-radius: 10px;
   font-size: 1.3rem;
@@ -295,16 +362,20 @@ footer a:hover {
   position: relative;
 }
 .modal .modal_show .actions .modal_button.surrender {
-  background-color: rgba(236, 34, 81, 0.5);
+  background-color: var(--button-muted-bg);
 }
 .modal .modal_show .actions .modal_button.surrender:hover {
-  background-color: #ec2251;
+  filter: brightness(85%);
 }
 .modal .modal_show .actions .modal_button.continue {
-  background-color: #34c16a;
+  background-color: var(--accent);
 }
 .modal .modal_show .actions .modal_button.continue:hover {
   filter: brightness(85%);
+}
+
+:root {
+  transition: all 0.8s ease-in;
 }
 
 *,
@@ -318,9 +389,9 @@ footer a:hover {
 body {
   display: flex;
   flex-direction: column;
-  font-family: "Inconsolata", monospace;
-  background-color: #001220;
-  color: white;
+  font-family: var(--font-secondary);
+  background-color: var(--body-bg);
+  color: var(--text-color);
   background-image: url("./imgs/BG.svg");
   background-size: cover;
   background-repeat: no-repeat;

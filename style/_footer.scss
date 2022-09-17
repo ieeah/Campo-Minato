@@ -6,15 +6,15 @@ footer {
   width: 80%;
   margin-inline: auto;
   font-weight: 200;
-
+  color: white;
   a {
-    color: $clear;
+    color: white;
     transition: all .35s ease-in;
-    margin-left: .7rem;
-
+    font-weight: normal;
+    padding-left: .2rem;
     &:hover {
-      background-color: $bomb;
-      padding: .7rem;
+      background-color: var(--bomb);
+      padding: .3rem .7rem .3rem .2rem;
       border-radius: 4px;
       margin-left: 0;
     }

@@ -8,13 +8,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $fz-16;
+    margin-bottom: var(--fz-16);
     font-size: 1.8rem;
-    font-family: $font-primary;
-    color: $accent;
+    font-family: var(--font-primary);
+    color: var(--accent);
 
     #reactions_text.bad {
-      color: $color-deny;
+      color: var(--color-deny);
     }
 
     #icon {
@@ -51,8 +51,8 @@
         }
 
         .display_container {
-          background-color: $option-bg-color;
-          border-radius: $px5;
+          background-color: var(--option-bg-color);
+          border-radius: var(--px5);
           padding: 0.8rem 1rem;
           display: flex;
           align-items: center;
@@ -61,12 +61,12 @@
 
       select {
         width: 100%;
-        background-color: $option-bg-color;
-        color: $clear;
+        background-color: var(--option-bg-color);
+        color: var(--text-color);
         padding: .8rem 1rem;
         border: none;
-        border-radius: $px5;
-        font-size: $fz-12;
+        border-radius: var(--px5);
+        font-size: var(--fz-12);
       }
 
       #history_display {
@@ -96,13 +96,13 @@
 
     button {
       padding: .35rem;
-      color: $clear;
-      font-size: $fz-12;
+      color: var(--text-color);
+      font-size: var(--fz-12);
       text-transform: capitalize;
-      border-radius: $px5;
+      border-radius: var(--px5);
       border: none;
       cursor: pointer;
-      margin-bottom: $fz-12;
+      margin-bottom: var(--fz-12);
       transition: all .2s ease-out;
       display: grid;
       place-content: center;
@@ -115,16 +115,15 @@
       &.start {
         width: 55%;
         margin-right: 1rem;
-        background-color: $accent;
+        background-color: var(--accent);
       }
 
       &.surrender {
         width: 45%;
-        background-color: $color-secondary;
+        background-color: var(--color-secondary);
       }
 
       &:hover {
-        // background-color: rgba($color: $color-primary, $alpha: .8);
         opacity: .7;
       }
     }
