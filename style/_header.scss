@@ -7,35 +7,42 @@ header {
   justify-content: end;
   align-items: center;
   padding-block: .5rem;
+
   h1 {
     text-align: right;
     font-size: 2.5rem;
     color: var(--accent);
     font-family: var(--font-primary);
   }
+
   img {
     height: 100%;
     margin-left: 1.5rem;
   }
+
   button {
     border: none;
-      border-radius: var(--px5);
-      padding: .4rem .7rem;
-      margin-right: 1.5rem;
-      font-weight: bold;
-      color: var(--text-color);
-      cursor: pointer;
-      text-decoration: underline;
-      transition: cubic-bezier(0.6, 0.04, 0.98, 0.335) .15s;
+    border-radius: var(--px5);
+    padding: .4rem .7rem;
+    margin-right: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    cursor: pointer;
+    text-decoration: underline;
+    transition: cubic-bezier(0.6, 0.04, 0.98, 0.335) .15s;
   }
+
   button.active {
     background-color: var(--button-active-bg);
+
     &:hover {
       background-color: var(--accent);
     }
   }
+
   button.muted {
     background-color: var(--button-muted-bg);
+
     &:hover {
       background-color: var(--color-deny);
     }

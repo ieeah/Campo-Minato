@@ -100,10 +100,12 @@ mutedButton.addEventListener("click", () => {
 
 themeButton.addEventListener("click", () => {
   document.querySelector("html").classList.toggle("light");
-  let newtext = themeButton.innerText.includes("On") ? "Turn Lights Off" : "Turn Lights On";
+  let newtext = themeButton.innerText.includes("On")
+    ? "Turn Lights Off"
+    : "Turn Lights On";
   themeButton.innerText = newtext;
   themeButton.classList.toggle("muted");
-})
+});
 
 modalContinue.addEventListener("click", () => {
   closeModal();
@@ -361,23 +363,38 @@ function handleClick(id, isLoop = false) {
 function openCloseCells(id) {
   const closeCells = virtualCells[id].closeCells;
   const closeBombs = virtualCells[id].closeBombs;
-  let openedCells = 0;
+  let openedCells = [];
   let closeFlaggedCells = 0;
   closeCells.forEach((cell) => {
     if (virtualCells[cell.id].clicked) {
-      openedCells++;
+      openedCells.push(cell);
     } else if (virtualCells[cell.id].flagged) {
       closeFlaggedCells++;
     }
   });
   if (
     closeFlaggedCells >= closeBombs &&
-    openedCells + closeFlaggedCells < closeCells.length
+    openedCells.length + closeFlaggedCells < closeCells.length
   ) {
     closeCells.forEach((closeCell) => {
       handleClick(closeCell.id, true);
     });
+  } else if (openedCells.length + closeFlaggedCells !== closeCells.length) {
+    closeCells.forEach((cellToMark) => {
+      if (
+        !openedCells.includes(cellToMark) &&
+        !cellToMark.cell.classList.contains("flagged")
+      ) {
+        cellToMark.cell.classList.add("marked");
+      }
+    });
   }
+
+  setTimeout(() => {
+    closeCells.forEach((cellToUnmark) => {
+      cellToUnmark.cell.classList.remove("marked");
+    });
+  }, 250);
 }
 function handleReaction(type) {
   let reaction = "";
@@ -651,6 +668,7 @@ function playAudio(audio) {
 function toggleAudio() {
   mutedButton.classList.toggle("muted");
   mutedButton.classList.toggle("active");
-  mutedButton.innerText = mutedButton.innerText === "Audio On" ? "Audio Off" : "Audio On";
+  mutedButton.innerText =
+    mutedButton.innerText === "Audio On" ? "Audio Off" : "Audio On";
   audioMuted = !audioMuted;
 }
