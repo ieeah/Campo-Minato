@@ -65,3 +65,8 @@
 .cell.flagged:hover {
   filter: brightness(120%);
 }
+
+.cell.marked {
+  background-color: var(--text-color);
+  opacity: .6;
+}
