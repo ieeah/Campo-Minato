@@ -41,7 +41,7 @@ It's just plain JS and some SCSS for the styling, why haven't I used some fancy 
   - when clicking on an open cell, the surrounding cells will be "highlighted"
   - [x] when clicking on an open cell that has, in it's surrounding cells, a number of flagged cells equal to the number of bombs it has, the surrounding cells are gonna be opened, hoping you flagged them right, or, you know it.
   - [ ] I'm wondering in adding some translations, but actually in vanilla JS it's gonna be too much of "innerText" work, probably won't do this
-  - [ ] Adding light/dark themes, I never did this feature in any of my projects but I always wanted to, probably this is gonna be my first
+  - [x] Adding light/dark themes, I never did this feature in any of my projects but I always wanted to, probably this is gonna be my first
   - [x] some SFX when clicking/losing/winning the game, with, of course, the chance of muting them.
   
   
