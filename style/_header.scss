@@ -10,8 +10,8 @@ header {
   h1 {
     text-align: right;
     font-size: 2.5rem;
-    color: $accent;
-    font-family: $font-primary;
+    color: var(--accent);
+    font-family: var(--font-primary);
   }
   img {
     height: 100%;
@@ -19,25 +19,25 @@ header {
   }
   button {
     border: none;
-      border-radius: $px5;
+      border-radius: var(--px5);
       padding: .4rem .7rem;
       margin-right: 1.5rem;
       font-weight: bold;
-      color: $dark;
+      color: var(--text-color);
       cursor: pointer;
       text-decoration: underline;
       transition: cubic-bezier(0.6, 0.04, 0.98, 0.335) .15s;
   }
   button.active {
-    background-color:rgba($color: $accent, $alpha: .6);
+    background-color: var(--button-active-bg);
     &:hover {
-      background-color: $accent;
+      background-color: var(--accent);
     }
   }
   button.muted {
-    background-color: rgba($color: $color-deny, $alpha: .6);
+    background-color: var(--button-muted-bg);
     &:hover {
-      background-color: $color-deny;
+      background-color: var(--color-deny);
     }
   }
 }

@@ -11,7 +11,7 @@
   .overlay {
     width: 100%;
     height: 100%;
-    background-color: rgba($bg-color-dark, .3);
+    background-color: var(--modal-overlay-bg);
     position: absolute;
     inset: 0;
   }
@@ -20,11 +20,11 @@
     width: 700px;
     height: 350px;
     border-radius: 15px;
-    background-color: $bg-color-dark;
+    background-color: var(--body-bg);
     box-shadow:
-      inset 0 0 10px $color-deny,
-      inset 0 0 18px $bg-color-secondary,
-      inset 0 0 25px $bg-color-dark;
+      inset 0 0 10px var(--color-deny),
+      inset 0 0 18px var(--bg-color-secondary),
+      inset 0 0 25px var(--bg-color-dark);
     z-index: 2;
     padding: 1.5rem;
 
@@ -32,7 +32,7 @@
       padding: 1.5rem;
       width: 100%;
       height: 80%;
-      color: $clear;
+      color: var(--text-color);
       font-size: 1.75rem;
     }
 
@@ -46,7 +46,7 @@
       .modal_button {
         padding: .5rem 2rem;
         margin-left: 1rem;
-        color: $clear;
+        color: var(--text-color);
         border: none;
         border-radius: 10px;
         font-size: 1.3rem;
@@ -55,15 +55,15 @@
         position: relative;
 
         &.surrender {
-          background-color: rgba($color: $color-deny, $alpha: .5);
+          background-color: var(--button-muted-bg);
 
           &:hover {
-            background-color: rgba($color: $color-deny, $alpha: 1);
+            filter: brightness(85%);
           }
         }
 
         &.continue {
-          background-color: $accent;
+          background-color: var(--accent);
           &:hover {
             filter: brightness(85%);
           }

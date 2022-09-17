@@ -20,12 +20,14 @@
 // cells
 
 .cell {
-  background-color: rgba($color: $color-primary, $alpha: .3);
-  border: 1px solid $color-secondary;
+  background-color: var(--cells-bg-def);
+  border: 1px solid var(--color-secondary);
   display: grid;
   place-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
+  // font-size: 1.5rem;
+  font-size: clamp(1.2rem, 1vw, 2rem);
+  font-weight: bold;
 }
 
 .cell.over {
@@ -33,12 +35,12 @@
 }
 
 .cell:hover {
-  filter: brightness(200%);
+  background-color: transparent;
 }
 
 .cell.bomb {
-  background-color: $bomb;
-  color: $shadow;
+  background-color: var(--bomb);
+  color: var(--shadow);
   pointer-events: none;
   font-size: 2rem;
   background-image: url("./imgs/icons/cells_icons/bomb.svg");
@@ -48,16 +50,12 @@
 }
 
 .cell.not {
-  background-color: rgba($color: $dark, $alpha: .3);
+  background-color: var(--cells-bg-not);
   cursor: default;
 }
 
-.cell.not:hover {
-  filter: brightness(100%);
-}
-
 .cell.flagged {
-  background-color: rgba($color: $accent, $alpha: .7);
+  background-color: var(--cells-bg-flag);
   background-image: url('./imgs/icons/cells_icons/flag.svg');
   background-size: 50%;
   background-position: center center;
@@ -65,5 +63,5 @@
 }
 
 .cell.flagged:hover {
-  filter: brightness(110%);
+  filter: brightness(120%);
 }

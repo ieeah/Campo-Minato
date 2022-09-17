@@ -18,6 +18,7 @@ const clickedCellsDisplay = document.getElementById("clickedCellsDisplay");
 const historyDisplay = document.getElementById("history_display");
 const helpButton = document.getElementById("helpButton");
 const mutedButton = document.getElementById("mutedButton");
+const themeButton = document.getElementById("themeButton");
 const audioClick = document.getElementById("audio_click");
 const audioLost = document.getElementById("audio_lost");
 const audioWon = document.getElementById("audio_won");
@@ -96,6 +97,13 @@ helpButton.addEventListener("click", () => {
 mutedButton.addEventListener("click", () => {
   toggleAudio();
 });
+
+themeButton.addEventListener("click", () => {
+  document.querySelector("html").classList.toggle("light");
+  let newtext = themeButton.innerText.includes("On") ? "Turn Lights Off" : "Turn Lights On";
+  themeButton.innerText = newtext;
+  themeButton.classList.toggle("muted");
+})
 
 modalContinue.addEventListener("click", () => {
   closeModal();
@@ -437,13 +445,14 @@ function colorCounter(closeCounter) {
       return "#07fc03";
       break;
     case 1:
-      return "#00ffb7";
+      // return "#00ffb7";
+      return "var(--text-color)";
       break;
     case 2:
       return "#f743eb";
       break;
     case 3:
-      return "#ff3838";
+      return "#00ddff";
       break;
     case 4:
       return "#ff8438";
@@ -642,6 +651,6 @@ function playAudio(audio) {
 function toggleAudio() {
   mutedButton.classList.toggle("muted");
   mutedButton.classList.toggle("active");
-  mutedButton.innerText = mutedButton.innerText === "Audio" ? "Muted" : "Audio";
+  mutedButton.innerText = mutedButton.innerText === "Audio On" ? "Audio Off" : "Audio On";
   audioMuted = !audioMuted;
 }
