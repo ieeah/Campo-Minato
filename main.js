@@ -314,7 +314,7 @@ function endGame() {
 function addMatch(outcome) {
   let newTime = timerDisplay.innerText;
   saveMatch(outcome, Date.now(), difficulty.value, newTime);
-  printHistory();
+  controlHistoryDisplay();
 }
 
 /**
