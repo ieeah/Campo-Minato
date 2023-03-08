@@ -1,6 +1,8 @@
 ![](https://img.shields.io/badge/developing-spare%20time-yellow)
 ![](https://img.shields.io/badge/version-0.9.0-success)
 
+[A live version of this can be played here](https://minesweeper-q3rj.onrender.com/)
+
 # MineSweeper aka "Campo Minato" in italian
 
 It's been a lot now that I have been working on this game, i took it as a personal challenge, and usually I do accomplish what i want to do, even if it take a few sleepless nights and some strong headhaches.
