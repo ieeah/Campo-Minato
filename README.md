@@ -45,6 +45,7 @@ It's just plain JS and some SCSS for the styling, why haven't I used some fancy 
   - [ ] I'm wondering in adding some translations, but actually in vanilla JS it's gonna be too much of "innerText" work, probably won't do this
   - [x] Adding light/dark themes, I never did this feature in any of my projects but I always wanted to, probably this is gonna be my first
   - [x] some SFX when clicking/losing/winning the game, with, of course, the chance of muting them.
+  - [ ] Pausing the timer when the tab isn't focused
   
   
   ### Probably no one is gonna see this repository/reading this, but if someone will, and has some advices or he'd like to share some knowledge to make this better (I know there's a lot that can be done here to make it better designed, faster and so much on) he's welcome!
