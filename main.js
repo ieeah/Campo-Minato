@@ -1,5 +1,6 @@
 // import translations from "./js/translations";
 import { historyExist, getHistory, saveMatch } from "./js/LS.js";
+import { ICONS, REACTIONS, LEVELS } from "./js/constants.js"
 
 // crea le referenze al DOM per accesso semplificato.
 const board = document.getElementById("boardgame");
@@ -23,35 +24,8 @@ const audioClick = document.getElementById("audio_click");
 const audioLost = document.getElementById("audio_lost");
 const audioWon = document.getElementById("audio_won");
 const audioFlag = document.getElementById("audio_flag");
+
 let audioMuted = false;
-const icons = {
-  reactions: [
-    ["bad_cry", "bad_emb", "end_cross"],
-    ["ok_cool", "ok_hearts", "ok_perv"],
-  ],
-  actions: ["action_play", "action_surrender"],
-  cells: ["bomb", "flag"],
-};
-const reaction_texts = {
-  bad: [
-    "Oh No!",
-    "Peccato!",
-    "Nope!",
-    "Game Over!",
-    "KO tecnico!",
-    "Non Va!",
-    "Looooser!",
-  ],
-  good: [
-    "Grande!",
-    "Vai così!",
-    "Boom Baby!",
-    "Fenomeno!",
-    "Che numero!",
-    "Che gioco!",
-    "Sei Forte!",
-  ],
-};
 
 // il numero di bombe presenti sul campo
 let n_Bombs = 12;
@@ -66,7 +40,6 @@ let flaggedBombs = [];
 let remainingBombs = n_Bombs;
 // le celle vicine alla cella cliccata
 let theseAreCloseCells = [];
-let clickedArrayCells = [];
 let closeBombsCounter = null;
 let firstClick = true;
 // una rappresentazione fittizia di tutte le celle
@@ -118,7 +91,7 @@ modalSurrender.addEventListener("click", () => {
 
 function startGame() {
   resetGame();
-  getDifficultyLevel();
+  setDifficultyLevel(difficulty.value);
   generateBombsIds();
   setTheUI();
   generateBoard();
@@ -166,32 +139,11 @@ function resetGame() {
 /**
  * Funzione che setta il numero di celle e di bombe in base al livello di difficoltà selezionato dall'utente.
  */
-function getDifficultyLevel() {
-  switch (difficulty.value) {
-    case "1":
-      boardSize = 10;
-      n_Bombs = 12;
-      break;
 
-    case "2":
-      boardSize = 13;
-      n_Bombs = 30;
-      break;
 
-    case "3":
-      boardSize = 18;
-      n_Bombs = 45;
-      break;
-
-    case "4":
-      boardSize = 28;
-      n_Bombs = 85;
-      break;
-
-    case "5":
-      boardSize = 28;
-      n_Bombs = 120;
-  }
+function setDifficultyLevel(level) {
+  boardSize = LEVELS[level].boardSize;
+  n_Bombs = LEVELS[level].n_bombs;
 }
 
 /**
@@ -403,20 +355,20 @@ function handleReaction(type) {
   let isBad = header_text.classList.contains("bad");
   switch (type) {
     case "bad":
-      index = Math.floor(Math.random() * icons.reactions[0].length);
-      textIndex = Math.floor(Math.random() * reaction_texts.bad.length);
-      reaction = icons.reactions[0][index];
-      header_text.innerText = reaction_texts.bad[textIndex];
+      index = Math.floor(Math.random() * ICONS.reactions[0].length);
+      textIndex = Math.floor(Math.random() * REACTIONS.bad.length);
+      reaction = ICONS.reactions[0][index];
+      header_text.innerText = REACTIONS.bad[textIndex];
       header_icon.src = `./imgs/icons/moves_reactions/${reaction}.svg`;
       if (!isBad) {
         header_text.classList.add("bad");
       }
       break;
     case "good":
-      index = Math.floor(Math.random() * icons.reactions[1].length);
-      textIndex = Math.floor(Math.random() * reaction_texts.good.length);
-      reaction = icons.reactions[1][index];
-      header_text.innerText = reaction_texts.good[textIndex];
+      index = Math.floor(Math.random() * ICONS.reactions[1].length);
+      textIndex = Math.floor(Math.random() * REACTIONS.good.length);
+      reaction = ICONS.reactions[1][index];
+      header_text.innerText = REACTIONS.good[textIndex];
       header_icon.src = `./imgs/icons/moves_reactions/${reaction}.svg`;
       if (isBad) {
         header_text.classList.remove("bad");
@@ -579,11 +531,11 @@ function defineCloseCells(_id) {
       index === _id
         ? null
         : surroundingCells.push({
-            id: index,
-            x: cell.DOMCell.x,
-            y: cell.DOMCell.y,
-            cell: cell.DOMCell.cellReference,
-          });
+          id: index,
+          x: cell.DOMCell.x,
+          y: cell.DOMCell.y,
+          cell: cell.DOMCell.cellReference,
+        });
     }
   });
   theseAreCloseCells = surroundingCells;
@@ -609,9 +561,8 @@ function printHistory() {
         }
         const date = document.createElement("span");
         let data = new Date(match.timestamp);
-        date.innerText = `${data.getDate()}/${
-          data.getMonth() + 1
-        }/${data.getFullYear()}`;
+        date.innerText = `${data.getDate()}/${data.getMonth() + 1
+          }/${data.getFullYear()}`;
         const time = document.createElement("span");
         time.innerText = match.time;
         const level = document.createElement("span");
