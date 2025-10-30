@@ -67,11 +67,25 @@ class TranslationManager {
    */
   getLocaleName(code) {
     const names = {
-      it_IT: "Italiano",
-      en_EN: "English",
-      es_ES: "Español",
+      it_IT: "🇮🇹 Italiano",
+      en_EN: "🇬🇧 English",
+      es_ES: "🇪🇸 Español",
     };
     return names[code] || code;
+  }
+
+  /**
+   * Ottiene il percorso dell'immagine della bandiera
+   * @param {string} code - Codice della lingua
+   * @returns {string} Percorso dell'immagine
+   */
+  getFlagPath(code) {
+    const flags = {
+      it_IT: "./imgs/flags/it.svg",
+      en_EN: "./imgs/flags/en.svg",
+      es_ES: "./imgs/flags/es.svg",
+    };
+    return flags[code] || "";
   }
 }
 

@@ -216,13 +216,21 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
             ]),
           ]),
           createVNode("div", { className: "optionGroup" }, [
-            createVNode("div", { className: "singleOption full" }, [
-              createVNode("div", { id: "languageSelect" }, "Lingua"),
+            createVNode("div", { className: "singleOption full language-selector" }, [
+              createVNode("div", { className: "language-label-wrapper" }, [
+                createVNode("img", {
+                  src: translationManager.getFlagPath(state.language),
+                  alt: "flag",
+                  className: "current-flag",
+                }),
+                createVNode("div", { id: "languageSelect" }, "Lingua"),
+              ]),
               createVNode(
                 "select",
                 {
                   name: "languageSelect",
                   "aria-labelledby": "languageSelect",
+                  className: "language-select",
                   value: state.language,
                   onChange: (e) => {
                     const newLanguage = e.target.value;
