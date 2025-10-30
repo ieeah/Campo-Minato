@@ -27,6 +27,7 @@ export const initialGameState = {
   reactionIcon: "./imgs/icons/new_game.svg",
   reactionBad: false,
   difficulty: "1",
+  language: "it_IT",
   showModal: false,
   modalMessage: "",
   modalShowRedButton: false,

@@ -6,6 +6,7 @@
 import { createVNode } from "../virtualDom.js";
 import { historyExist, getHistory } from "../LS.js";
 import { colorCounter } from "../game/helpers.js";
+import { translationManager } from "../game/translationManager.js";
 
 /**
  * Renders a single cell
@@ -211,6 +212,29 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
                   createVNode("option", { value: "4" }, "Difficile"),
                   createVNode("option", { value: "5" }, "Pazzo"),
                 ]
+              ),
+            ]),
+          ]),
+          createVNode("div", { className: "optionGroup" }, [
+            createVNode("div", { className: "singleOption full" }, [
+              createVNode("div", { id: "languageSelect" }, "Lingua"),
+              createVNode(
+                "select",
+                {
+                  name: "languageSelect",
+                  "aria-labelledby": "languageSelect",
+                  value: state.language,
+                  onChange: (e) => {
+                    const newLanguage = e.target.value;
+                    setState({ language: newLanguage });
+                    translationManager.setLocale(newLanguage);
+                    console.log("🌍 Lingua selezionata:", newLanguage);
+                    console.log("📝 Traduzioni:", translationManager.translations[newLanguage]);
+                  },
+                },
+                translationManager.getAvailableLocales().map((locale) =>
+                  createVNode("option", { value: locale.code }, locale.name)
+                )
               ),
             ]),
           ]),
