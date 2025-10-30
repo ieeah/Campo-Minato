@@ -75,31 +75,67 @@ export const countCloseBombs = (closeCells, bombs) => {
 /**
  * Updates UI reaction based on game events
  * @param {string} type - Type of reaction ("good" or "bad")
+ * @param {Function} getState - Function to get current state
  * @param {Function} setState - State setter function
  */
-export const handleReaction = (type, setState) => {
+export const handleReaction = (type, getState, setState) => {
+  const currentState = getState();
+  const currentIcon = currentState.reactionIcon;
+  const currentText = currentState.reactionText;
+  const currentBad = currentState.reactionBad;
+
   let reaction = "";
   let index = -1;
   let textIndex = -1;
+  let newIcon = "";
+  let newText = "";
+  let attempts = 0;
+  const maxAttempts = 20; // Evita loop infiniti
 
   if (type === "bad") {
-    index = Math.floor(Math.random() * ICONS.reactions[0].length);
     const reactions = translationManager.t("reactions.bad");
-    textIndex = Math.floor(Math.random() * reactions.length);
-    reaction = ICONS.reactions[0][index];
+
+    // Continua a generare finché non trovi una combinazione diversa
+    do {
+      index = Math.floor(Math.random() * ICONS.reactions[0].length);
+      textIndex = Math.floor(Math.random() * reactions.length);
+      reaction = ICONS.reactions[0][index];
+      newIcon = `./imgs/icons/moves_reactions/${reaction}.svg`;
+      newText = reactions[textIndex];
+      attempts++;
+    } while (
+      attempts < maxAttempts &&
+      currentBad === true &&
+      newIcon === currentIcon &&
+      newText === currentText
+    );
+
     setState({
-      reactionText: reactions[textIndex],
-      reactionIcon: `./imgs/icons/moves_reactions/${reaction}.svg`,
+      reactionText: newText,
+      reactionIcon: newIcon,
       reactionBad: true,
     });
   } else {
-    index = Math.floor(Math.random() * ICONS.reactions[1].length);
     const reactions = translationManager.t("reactions.good");
-    textIndex = Math.floor(Math.random() * reactions.length);
-    reaction = ICONS.reactions[1][index];
+
+    // Continua a generare finché non trovi una combinazione diversa
+    do {
+      index = Math.floor(Math.random() * ICONS.reactions[1].length);
+      textIndex = Math.floor(Math.random() * reactions.length);
+      reaction = ICONS.reactions[1][index];
+      newIcon = `./imgs/icons/moves_reactions/${reaction}.svg`;
+      newText = reactions[textIndex];
+      attempts++;
+    } while (
+      attempts < maxAttempts &&
+      currentBad === false &&
+      newIcon === currentIcon &&
+      newText === currentText
+    );
+
     setState({
-      reactionText: reactions[textIndex],
-      reactionIcon: `./imgs/icons/moves_reactions/${reaction}.svg`,
+      reactionText: newText,
+      reactionIcon: newIcon,
       reactionBad: false,
     });
   }
@@ -223,7 +259,7 @@ export const handleClick = (id, getState, setState, isLoop = false) => {
 
   if (isABomb(id, state.bombs)) {
     audioManager.playLost();
-    handleReaction("bad", setState);
+    handleReaction("bad", getState, setState);
 
     // Mark all bombs as visible
     const newVirtualCells = [...state.virtualCells];
@@ -256,8 +292,11 @@ export const handleClick = (id, getState, setState, isLoop = false) => {
       closeBombs: closeBombs,
     };
 
-    audioManager.playClick();
-    handleReaction("good", setState);
+    // Solo se è un click dell'utente (non ricorsivo), aggiorna audio e reazioni
+    if (!isLoop) {
+      audioManager.playClick();
+      handleReaction("good", getState, setState);
+    }
 
     const newClickedCells = state.clickedCells + 1;
     setState({
