@@ -38,24 +38,27 @@ export const initialGameState = {
  * @param {Function} setState - State setter function
  */
 export const resetGame = (setState) => {
-  setState({
-    n_Bombs: 12,
-    remainingBombs: 12,
-    flaggedBombs: [],
-    theseAreCloseCells: [],
-    virtualCells: [],
-    flaggedCells: [],
-    bombs: [],
-    boardSize: 10,
-    clickedCells: 0,
-    seconds: 0,
-    minutes: 0,
-    firstClick: true,
-    paused: true,
-    gameEnded: false,
-    usedHelps: 0,
-    reactionText: "Weee Giochiamoo?",
-    reactionIcon: "./imgs/icons/new_game.svg",
-    reactionBad: false,
+  // Import translationManager here to avoid circular dependency
+  import("./translationManager.js").then(({ translationManager }) => {
+    setState({
+      n_Bombs: 12,
+      remainingBombs: 12,
+      flaggedBombs: [],
+      theseAreCloseCells: [],
+      virtualCells: [],
+      flaggedCells: [],
+      bombs: [],
+      boardSize: 10,
+      clickedCells: 0,
+      seconds: 0,
+      minutes: 0,
+      firstClick: true,
+      paused: true,
+      gameEnded: false,
+      usedHelps: 0,
+      reactionText: translationManager.t("header.newGame"),
+      reactionIcon: "./imgs/icons/new_game.svg",
+      reactionBad: false,
+    });
   });
 };

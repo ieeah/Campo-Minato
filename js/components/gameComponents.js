@@ -64,7 +64,7 @@ export const renderCell = (cell, boardSize, getState, setState, handleClickFn, f
 export const renderBoard = (state, getState, setState, handleClickFn, flagCellFn) => {
   if (state.virtualCells.length === 0) {
     return createVNode("div", { id: "boardgame" }, [
-      createVNode("h1", { className: "start_message" }, "Scegli una difficoltà ed inizia una nuova partita!"),
+      createVNode("h1", { className: "start_message" }, translationManager.t("header.startMessage")),
     ]);
   }
 
@@ -143,7 +143,7 @@ export const renderModal = (state, setState, closeModalFn, resetGameFn) => {
               resetGameFn(setState);
             },
           },
-          "Sì, mi arrendo"
+          translationManager.t("modal.surrender")
         ),
         createVNode(
           "button",
@@ -151,7 +151,7 @@ export const renderModal = (state, setState, closeModalFn, resetGameFn) => {
             className: "modal_button continue",
             onClick: () => closeModalFn(setState, state),
           },
-          "Andiamo!"
+          translationManager.t("modal.continue")
         ),
       ]),
     ]),
@@ -195,7 +195,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
         createVNode("div", { className: "options_wrap" }, [
           createVNode("div", { className: "optionGroup" }, [
             createVNode("div", { className: "singleOption full" }, [
-              createVNode("div", { id: "levelSelect" }, "Difficoltà"),
+              createVNode("div", { id: "levelSelect" }, translationManager.t("menu.difficulty")),
               createVNode(
                 "select",
                 {
@@ -206,11 +206,11 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
                     setState({ difficulty: e.target.value }),
                 },
                 [
-                  createVNode("option", { value: "1" }, "Principiante"),
-                  createVNode("option", { value: "2" }, "Facile"),
-                  createVNode("option", { value: "3" }, "Medio"),
-                  createVNode("option", { value: "4" }, "Difficile"),
-                  createVNode("option", { value: "5" }, "Pazzo"),
+                  createVNode("option", { value: "1" }, translationManager.t("difficulty.beginner")),
+                  createVNode("option", { value: "2" }, translationManager.t("difficulty.easy")),
+                  createVNode("option", { value: "3" }, translationManager.t("difficulty.medium")),
+                  createVNode("option", { value: "4" }, translationManager.t("difficulty.hard")),
+                  createVNode("option", { value: "5" }, translationManager.t("difficulty.expert")),
                 ]
               ),
             ]),
@@ -223,7 +223,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
                   alt: "flag",
                   className: "current-flag",
                 }),
-                createVNode("div", { id: "languageSelect" }, "Lingua"),
+                createVNode("div", { id: "languageSelect" }, translationManager.t("menu.language")),
               ]),
               createVNode(
                 "select",
@@ -234,8 +234,9 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
                   value: state.language,
                   onChange: (e) => {
                     const newLanguage = e.target.value;
-                    setState({ language: newLanguage });
                     translationManager.setLocale(newLanguage);
+                    // Force complete re-render by updating language in state
+                    setState({ language: newLanguage });
                     console.log("🌍 Lingua selezionata:", newLanguage);
                     console.log("📝 Traduzioni:", translationManager.translations[newLanguage]);
                   },
@@ -248,7 +249,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
           ]),
           createVNode("div", { className: "optionGroup" }, [
             createVNode("div", { className: "singleOption" }, [
-              createVNode("div", { id: "flagged-cells-descriptor" }, "Flags"),
+              createVNode("div", { id: "flagged-cells-descriptor" }, translationManager.t("menu.flags")),
               createVNode(
                 "div",
                 { "aria-labelledby": "flagged-cells-descriptor", className: "display_container" },
@@ -256,7 +257,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
               ),
             ]),
             createVNode("div", { className: "singleOption long" }, [
-              createVNode("div", { id: "bombs-descriptor" }, "Bombe rimanenti"),
+              createVNode("div", { id: "bombs-descriptor" }, translationManager.t("menu.remainingBombs")),
               createVNode(
                 "div",
                 { "aria-labelledby": "bombs-descriptor", className: "display_container" },
@@ -270,7 +271,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
           ]),
           createVNode("div", { className: "optionGroup" }, [
             createVNode("div", { className: "singleOption" }, [
-              createVNode("div", { id: "timer-descriptor" }, "Timer"),
+              createVNode("div", { id: "timer-descriptor" }, translationManager.t("menu.timer")),
               createVNode(
                 "div",
                 { "aria-labelledby": "time-descriptor", className: "display_container" },
@@ -278,7 +279,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
               ),
             ]),
             createVNode("div", { className: "singleOption long" }, [
-              createVNode("div", { id: "clicked-cells-descriptor" }, "Celle Scoperte"),
+              createVNode("div", { id: "clicked-cells-descriptor" }, translationManager.t("menu.revealedCells")),
               createVNode(
                 "div",
                 { "aria-labelledby": "clicked-cells-descriptor", className: "display_container" },
@@ -288,7 +289,7 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
           ]),
           createVNode("div", { className: "optionGroup" }, [
             createVNode("div", { className: "singleOption full" }, [
-              createVNode("div", { id: "history_display" }, "Storico Partite"),
+              createVNode("div", { id: "history_display" }, translationManager.t("menu.history")),
               renderHistory(),
             ]),
           ]),
@@ -317,12 +318,12 @@ export const App = (getState, setState, startGameFn, handleClickFn, flagCellFn, 
                 const currentState = getState();
                 if (currentState.firstClick) {
                   showModalFn(
-                    "Per arrenderti devi prima fare almeno una mossa!",
+                    translationManager.t("modal.surrenderFirst"),
                     false,
                     setState
                   );
                 } else {
-                  showModalFn("Sicuro?", true, setState);
+                  showModalFn(translationManager.t("modal.surrenderConfirm"), true, setState);
                 }
               },
             },

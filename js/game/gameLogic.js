@@ -3,11 +3,12 @@
  * Core game functionality including bomb generation, cell handling, and win/loss conditions
  */
 
-import { ICONS, REACTIONS, LEVELS } from "../constants.js";
+import { ICONS, LEVELS } from "../constants.js";
 import { saveMatch } from "../LS.js";
 import { between, isABomb } from "./helpers.js";
 import { stopTimer } from "./gameTimer.js";
 import { audioManager } from "./audioManager.js";
+import { translationManager } from "./translationManager.js";
 
 /**
  * Generates random bomb IDs for the board
@@ -83,19 +84,21 @@ export const handleReaction = (type, setState) => {
 
   if (type === "bad") {
     index = Math.floor(Math.random() * ICONS.reactions[0].length);
-    textIndex = Math.floor(Math.random() * REACTIONS.bad.length);
+    const reactions = translationManager.t("reactions.bad");
+    textIndex = Math.floor(Math.random() * reactions.length);
     reaction = ICONS.reactions[0][index];
     setState({
-      reactionText: REACTIONS.bad[textIndex],
+      reactionText: reactions[textIndex],
       reactionIcon: `./imgs/icons/moves_reactions/${reaction}.svg`,
       reactionBad: true,
     });
   } else {
     index = Math.floor(Math.random() * ICONS.reactions[1].length);
-    textIndex = Math.floor(Math.random() * REACTIONS.good.length);
+    const reactions = translationManager.t("reactions.good");
+    textIndex = Math.floor(Math.random() * reactions.length);
     reaction = ICONS.reactions[1][index];
     setState({
-      reactionText: REACTIONS.good[textIndex],
+      reactionText: reactions[textIndex],
       reactionIcon: `./imgs/icons/moves_reactions/${reaction}.svg`,
       reactionBad: false,
     });
@@ -176,7 +179,7 @@ export const startGame = (getState, setState, startTimerFn) => {
     minutes: 0,
     firstClick: true,
     usedHelps: 0,
-    reactionText: "Weee Giochiamoo?",
+    reactionText: translationManager.t("header.newGame"),
     reactionIcon: "./imgs/icons/new_game.svg",
     reactionBad: false,
     gameEnded: false,
@@ -236,7 +239,7 @@ export const handleClick = (id, getState, setState, isLoop = false) => {
     // Stop the timer
     stopTimer();
 
-    showModal("Game Over! Hai cliccato su una bomba!", false, setState);
+    showModal(translationManager.t("modal.gameOver"), false, setState);
     setState({ virtualCells: newVirtualCells, paused: true, gameEnded: true });
     return;
   }
@@ -272,7 +275,7 @@ export const handleClick = (id, getState, setState, isLoop = false) => {
       // Stop the timer
       stopTimer();
 
-      showModal("Grande! Hai vinto!\nFacciamo un'altra partita?", false, setState);
+      showModal(translationManager.t("modal.youWin"), false, setState);
       setState({ paused: true, gameEnded: true });
       return;
     }
@@ -390,7 +393,7 @@ export const flagCell = (id, getState, setState) => {
     // Stop the timer
     stopTimer();
 
-    showModal("Grande! Hai vinto!\nFacciamo un'altra partita?", false, setState);
+    showModal(translationManager.t("modal.youWin"), false, setState);
     setState({ paused: true, gameEnded: true });
   }
 };
@@ -406,7 +409,7 @@ export const hint = (getState, setState, flagCellFn) => {
 
   if (state.firstClick) {
     showModal(
-      "Devi iniziare la partita per poter utilizzare un aiuto!",
+      translationManager.t("help.needToStart"),
       false,
       setState
     );
@@ -415,7 +418,7 @@ export const hint = (getState, setState, flagCellFn) => {
 
   if (state.flaggedCells.length > state.bombs.length - 2) {
     showModal(
-      "Non puoi usare gli aiuti per trovare l'ultima bomba, bel tentativo!",
+      translationManager.t("help.noLastBomb"),
       false,
       setState
     );
@@ -424,7 +427,7 @@ export const hint = (getState, setState, flagCellFn) => {
 
   if (state.usedHelps > 0) {
     showModal(
-      "Hai già utilizzato un aiuto in questa partita!",
+      translationManager.t("help.alreadyUsed"),
       false,
       setState
     );
