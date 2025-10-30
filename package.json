@@ -1,0 +1,13 @@
+{
+  "name": "campo-minato",
+  "version": "1.0.0",
+  "description": "Campo Minato game with Virtual DOM",
+  "type": "module",
+  "scripts": {
+    "sass:build": "sass style.scss style.css",
+    "sass:watch": "sass --watch style.scss:style.css"
+  },
+  "devDependencies": {
+    "sass": "^1.77.0"
+  }
+}

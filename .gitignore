@@ -1,3 +1,4 @@
 /procedures.text
 *.txt
 /imgs/old_version
+/node_modules/

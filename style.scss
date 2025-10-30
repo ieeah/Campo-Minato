@@ -21,12 +21,14 @@
 body {
   display: flex;
   flex-direction: column;
+  height: 100vh;
   font-family: var(--font-secondary);
   background-color: var(--body-bg);
   color: var(--text-color);
   background-image: url('./imgs/BG.svg');
   background-size: cover;
   background-repeat: no-repeat;
+  background-position: center bottom;
   position: relative;
 }
 
